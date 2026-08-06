@@ -65,6 +65,20 @@ def read_optional_json(path: Path) -> dict[str, object]:
     return json.loads(path.read_text(encoding="utf-8"))
 
 
+def effective_execution_window_status(
+    declared_status: str,
+    next_open_et: pd.Timestamp,
+    *,
+    now_utc: pd.Timestamp | None = None,
+) -> str:
+    current = now_utc if now_utc is not None else pd.Timestamp.now(tz="UTC")
+    if current.tzinfo is None:
+        raise ValueError("now_utc must be timezone-aware")
+    if current >= next_open_et.tz_convert("UTC"):
+        return "MISSED"
+    return declared_status
+
+
 def panel_status(
     *,
     use_r39: bool,
@@ -210,6 +224,15 @@ def main(*, use_r39: bool = False) -> None:
         release_metadata["generated_at_utc"]
     )
     generated_at_jst = generated_at_utc.tz_convert("Asia/Tokyo")
+    execution_window_status = effective_execution_window_status(
+        str(
+            release_metadata.get(
+                "execution_window_status",
+                "UPCOMING",
+            )
+        ),
+        next_open_et,
+    )
     actions = sorted(set(r9_diagnostics.loc["action"].astype(str)))
     if len(actions) != 1:
         raise RuntimeError(f"R9 action disagreement: {actions}")
@@ -250,12 +273,7 @@ def main(*, use_r39: bool = False) -> None:
                 "STANDARD_REFRESH",
             )
         ),
-        "executionWindowStatus": str(
-            release_metadata.get(
-                "execution_window_status",
-                "UPCOMING",
-            )
-        ),
+        "executionWindowStatus": execution_window_status,
         "nextSession": next_session.date().isoformat(),
         "nextExecutionEt": next_open_et.strftime(
             "%Y-%m-%d %H:%M 美东时间"

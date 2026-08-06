@@ -29,6 +29,10 @@ const executionWindowStatus =
   "executionWindowStatus" in strategyLiveData
     ? strategyLiveData.executionWindowStatus
     : "UPCOMING";
+const r41EarliestExecutionEt =
+  executionWindowStatus === "MISSED"
+    ? strategyLiveData.accountBuildTiming.followingTrancheEarliestExecutionEt
+    : strategyLiveData.nextExecutionEt;
 const marketEnvironmentLabel = {
   incomplete: "数据不完整",
   healthy: "健康趋势",
@@ -700,7 +704,7 @@ export const parameterGroups = [
       ["目标 / 合格覆盖", `${formatPercent(pputProtectedCapacity.targetCoverage, 0)} / ${formatPercent(pputProtectedCapacity.minimumCoverage, 0)}–${formatPercent(pputProtectedCapacity.maximumCoverage, 0)}`, "按标的名义金额，不是按期权费占账户比例"],
       ["50 万美元示例", `${pputProtectedCapacity.example500kContracts} 张 = ${formatPercent(pputProtectedCapacity.example500kCoverage, 2)}`, "以 SPYM 90.52 美元和每张 100 股计算"],
       ["正常状态上限", formatPercent(pputProtectedCapacity.normalNonCashCap, 0), "仅在双 200 日趋势为正、安全垫正常且真实保护已确认时启用"],
-      ["最早建立窗口", `${strategyLiveData.nextExecutionEt}`, "最近完整收盘复核后，在下一常规开盘用实时盘口人工复核"],
+      ["最早建立窗口", r41EarliestExecutionEt, "最近完整收盘复核后，在下一常规开盘用实时盘口人工复核"],
       ["失效关闭", "回退 R40", "权限、实时价差、整数覆盖或持仓缺一项都不激活 R41"],
       ["不可消除的差异", "SPYM 与 PPUT/SPX 存在基差", "美式实物交割、价差、跟踪、税务与滚动时点可能偏离基准"],
     ],
