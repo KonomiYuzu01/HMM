@@ -1,0 +1,7 @@
+parent_config: config/paper_core_growth_gold20_r9_staged_reentry_netted_ensemble.yaml
+member_overrides:
+  portfolio_overrides:
+    no_trade_turnover: 0.05
+ensemble:
+  no_trade_turnover: 0.05
+output_dir: output/experiment_r10_r9_notrade5

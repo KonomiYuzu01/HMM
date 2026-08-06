@@ -1,0 +1,13 @@
+parent_config: config/experiment_r9_monotonic20_20y_proxy.yaml
+member_overrides:
+  portfolio_overrides:
+    turning_point_reentry:
+      zero_entry_bridge:
+        constructive_high_volatility_override:
+          maximum_downside_variation_share: 0.50
+          state_account_shares:
+            bull: 0.20
+            correction: 0.20
+            bear: 0.20
+            rebound: 0.20
+output_dir: output/experiment_r9_monotonic20_broad50_20y_proxy

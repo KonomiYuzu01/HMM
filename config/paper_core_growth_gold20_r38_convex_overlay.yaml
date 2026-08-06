@@ -1,0 +1,110 @@
+name: paper_core_growth_gold20_r38_convex_overlay
+strategy_label: R38
+release: 2026-07-29-r38-v2
+status: staged_production
+parent_strategy: paper_core_growth_gold20_r11_diversified_financing
+purpose: Preserve the R9 regime engine while filling unused risk capacity only when QQQ and SMH trends are healthy and short-term volatility is not accelerating, with hard leverage, shock, and concentration controls.
+
+risk_budget:
+  base_non_cash_multiplier: 1.070
+  stable_volatility_relative_multiplier: 1.375
+  accelerating_volatility_relative_multiplier: 1.30
+  one_session_shock_absolute_multiplier: 1.00
+  financing_leg: CASH
+  maximum_negative_cash_weight: -0.20
+  maximum_non_cash_weight: 1.20
+  trend_rule: Both QQQ and SMH prior closes are above their respective prior-close 200-session moving averages.
+  volatility_acceleration_rule: Extra capacity is allowed only when both QQQ and SMH prior-close 21-session realized volatility is no greater than their respective 63-session realized volatility.
+  acceleration_response: Return to the original R38 1.30 relative multiplier; do not reduce the original R38 core exposure.
+  shock_rule: A causal high-volatility episode can remove financing for one trading session.
+  modeled_current_financing_spread_bps: 100
+  modeled_stress_financing_spread_bps: 150
+
+semiconductor_overlay:
+  update_interval_trading_days: 21
+  relative_momentum_lookback_trading_days: 126
+  overlay_fraction: 0.10
+  formula: R38 SMH growth share equals 90% of the R9-derived share plus 10% of the full causal relative-momentum signal share.
+  high_volatility_behavior: The full signal endpoint returns to 50/50 in the highest causal volatility state.
+  maximum_absolute_change_from_base_growth_share: 0.10
+  preserve_qqq_plus_smh_growth_budget: true
+
+capital_efficiency:
+  instrument: GDE
+  replaced_asset: GOLD
+  maximum_gold_sleeve_substitution_fraction: 0.10
+  growth_gate_denominator: 0.80
+  account_weight_no_trade_band: 0.02
+
+smh_gap_guard:
+  signal_observed_at_open: true
+  execution_delay_trading_days: 1
+  absolute_smh_gap_trigger: -0.025
+  relative_smh_minus_qqq_gap_trigger: -0.005
+  minimum_pretrigger_smh_weight: 0.642
+  post_trigger_smh_cap: 0.15
+  overflow_asset: CASH
+  recovery_signal: SMH daily return minus QQQ daily return is positive
+  recovery_confirmations: 2
+  maximum_hold_trading_days: 4
+  modeled_emergency_slippage_bps: 20
+
+execution:
+  ordinary_assets_one_way_cost_bps: 7.5
+  stress_ordinary_assets_one_way_cost_bps: 15
+  gde_current_liquidity_one_way_cost_bps: 40
+  gde_stress_one_way_cost_bps: 75
+  gde_order_type: limit_only
+  block_market_orders: true
+  require_current_gde_quote: true
+  require_real_positions: true
+  preserve_gold_plus_gde_account_weight: true
+  require_financing_cost_observation: true
+
+rollout:
+  reference_strategy: R11
+  initial_r38_share_of_managed_capital: 0.25
+  remaining_r11_share_of_managed_capital: 0.75
+  forward_freeze_price_as_of: 2026-07-28
+  first_forward_session: 2026-07-29
+  minimum_sessions_before_each_increase: 63
+  possible_r38_shares:
+    - 0.25
+    - 0.50
+    - 1.00
+  increase_requirements:
+    - complete_daily_signal_and_execution_log
+    - no_data_integrity_failure
+    - realized_gde_one_way_cost_not_above_75bps
+    - realized_financing_spread_not_above_150bps
+    - r38_relative_drawdown_not_worse_than_r11_by_more_than_0.50pct
+    - no_unresolved_operational_incident
+  immediate_order_blocks:
+    - stale_core_prices
+    - stale_gde_quote
+    - missing_real_positions
+    - missing_risk_state
+    - missing_overlay_state
+  fallback: Keep the affected capital in R11; do not liquidate solely because a rollout review fails.
+
+validation:
+  net_cagr_2015_2026: 0.264771
+  maximum_drawdown_2015_2026: -0.166577
+  r11_maximum_drawdown_same_period: -0.163534
+  maximum_drawdown_tolerance_percentage_points: 0.50
+  cost_stress_cagr_2015_2026: 0.233161
+  long_proxy_cagr_2006_2026: 0.182525
+  live_gde_cagr_2022_2026: 0.396121
+  full_library_spa_p_values:
+    block_21: 0.019990
+    block_63: 0.015492
+    block_126: 0.034483
+  full_library_unique_paths: 892
+  final_candidate_audit: output/r38_accelerating_volatility_1375_final_candidate_audit
+
+data:
+  r9_output: output/paper_core_growth_gold20_r9_staged_reentry_netted_ensemble
+  r11_output: output/paper_core_growth_gold20_r11_diversified_financing
+  core_open_close: data/adjusted_open_close_2011_present.csv
+  gde_open_close: data/retail_alternatives_open_close.csv
+  output_dir: output/paper_core_growth_gold20_r38_convex_overlay

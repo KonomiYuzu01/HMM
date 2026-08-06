@@ -1,0 +1,7 @@
+parent_config: config/research_hmm_multi_lookback_756_1008_1512_20y_proxy.yaml
+ensemble:
+  disagreement_risk_control:
+    enabled: true
+    assets: [QQQ, SEMIS]
+    destination: CASH
+output_dir: output/research_hmm_multi_lookback_disagreement_20y_proxy

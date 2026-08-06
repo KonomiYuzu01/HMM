@@ -1,0 +1,15 @@
+.venv/
+__pycache__/
+.pytest_cache/
+*.py[cod]
+*.egg-info/
+output/
+tmp/
+.pnpm-store/
+node_modules/
+.next/
+.wrangler/
+.DS_Store
+.env
+.env.*
+!.env.example

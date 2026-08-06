@@ -1,0 +1,19 @@
+parent_config: config/paper_core_growth_gold20_dual_reentry_floor45_goodvol_bear20_inverse_momentum_netted_ensemble_2012.yaml
+member_overrides:
+  portfolio_overrides:
+    turning_point_reentry:
+      zero_entry_bridge:
+        maximum_current_growth_exposure: 0.35
+        path_conditioning:
+          enabled: true
+          minimum_confirmation_days: 1
+          staging_days: 10
+          initial_account_share: 0.20
+        constructive_high_volatility_override:
+          maximum_downside_variation_share: 0.50
+          state_account_shares:
+            bull: 0.35
+            correction: 0.35
+            bear: 0.35
+            rebound: 0.35
+output_dir: output/paper_core_growth_gold20_r9_staged_reentry_netted_ensemble_2012

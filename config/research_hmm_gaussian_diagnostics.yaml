@@ -1,0 +1,5 @@
+parent_config: config/paper_core_growth_gold20_r9_staged_reentry_netted_ensemble.yaml
+production_freshness:
+  enabled: false
+output_dir: output/research_hmm_gaussian_diagnostics
+

@@ -1,0 +1,24 @@
+parent_config: config/paper_core_growth_gold20_daily_risk_netted_ensemble_2012.yaml
+data_overrides:
+  signal_tickers:
+    VIX: ^VIX
+    VIX3M: ^VIX3M
+    BREADTH: RSP
+    CREDIT: HYG
+  cache: data/prices_recovery_quality.csv
+member_overrides:
+  portfolio_overrides:
+    daily_hmm_state_filter:
+      enabled: true
+      entry_only: true
+      state_update_mode: scheduled_only
+      reentry_mode: confidence_blend
+      recovery_quality:
+        enabled: true
+        decision_mode: soft
+        lookback_days: 21
+        minimum_confirmations: 2
+        signals:
+          breadth: {numerator: BREADTH, denominator: SPX}
+          credit: {numerator: CREDIT, denominator: BOND}
+output_dir: output/paper_core_growth_gold20_confidence_blend_daily_hmm_netted_ensemble_2012

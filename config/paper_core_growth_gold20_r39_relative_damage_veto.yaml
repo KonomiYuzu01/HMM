@@ -1,0 +1,48 @@
+name: paper_core_growth_gold20_r39_relative_damage_veto
+strategy_label: R39
+release: 2026-07-30-r39-v1
+status: staged_production
+parent_strategy: paper_core_growth_gold20_r38_convex_overlay
+purpose: Preserve the qualified R38 staged account target while preventing a slow semiconductor anchor from re-establishing concentration after material multi-session relative damage.
+
+relative_damage_concentration_veto:
+  signal_observation: Completed QQQ and SMH closes known before the next execution session.
+  lookback_trading_days: 21
+  account_relative_loss_budget: 0.03
+  minimum_smh_share_of_growth_sleeve: 0.60
+  maximum_active_smh_share_of_growth_sleeve: 0.50
+  maximum_share_activation_multiple: 1.10
+  maximum_share_requires_volatility_acceleration_clear: true
+  relative_loss_formula: 1 - exp(sum(log(SMH return) - log(QQQ return)))
+  proposed_account_loss_formula: proposed absolute SMH weight times trailing relative loss
+  implemented_smh_cap_formula: loss-budget cap from 3%; after volatility acceleration clears, additionally cap at 50% of the QQQ plus SMH growth sleeve once proposed account loss reaches 1.10 times the budget
+  overflow_asset: QQQ
+  preserve_qqq_plus_smh_growth_budget: true
+  reduce_total_growth_exposure: false
+  create_short_positions: false
+
+execution:
+  inherit_parent_cost_and_order_policy: true
+  require_parent_r38_production_qualification: true
+  require_current_core_close: true
+  require_real_positions: true
+  require_current_gde_quote: true
+  block_market_orders: true
+
+validation:
+  research_candidate: r39_relative_damage_concentration_veto
+  research_output: output/r39_relative_damage_concentration_veto
+  complete_cagr_drag: -0.0021601500210775004
+  complete_max_drawdown_delta: -0.000005249824467479236
+  holdout_cagr_drag: -0.001888114201274771
+  current_proposed_account_relative_loss: 0.04949981855202781
+  current_implemented_account_relative_loss: 0.03
+  initial_research_requirements_passed: 11
+  initial_research_requirements: 11
+
+data:
+  parent_r38_config: config/paper_core_growth_gold20_r38_convex_overlay.yaml
+  parent_r38_output: output/paper_core_growth_gold20_r38_convex_overlay
+  parent_r38_qualification: output/r38_production_qualification_audit
+  core_open_close: data/adjusted_open_close_2011_present.csv
+  output_dir: output/paper_core_growth_gold20_r39_relative_damage_veto

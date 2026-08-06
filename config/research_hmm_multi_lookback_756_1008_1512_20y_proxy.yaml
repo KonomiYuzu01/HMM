@@ -1,0 +1,3 @@
+parent_config: config/research_hmm_gaussian_diagnostics_20y_proxy.yaml
+model_lookback_days: [756, 1008, 1512]
+output_dir: output/research_hmm_multi_lookback_756_1008_1512_20y_proxy

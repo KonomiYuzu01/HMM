@@ -1,0 +1,5 @@
+parent_config: config/research_hmm_gaussian_diagnostics_20y_proxy.yaml
+member_overrides:
+  model_overrides:
+    return_moment_posterior: filtered
+output_dir: output/research_hmm_filtered_return_moments_20y_proxy

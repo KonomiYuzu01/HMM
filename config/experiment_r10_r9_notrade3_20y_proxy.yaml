@@ -1,0 +1,7 @@
+parent_config: config/experiment_r9_broad50_stage35_d10_20y_proxy.yaml
+member_overrides:
+  portfolio_overrides:
+    no_trade_turnover: 0.03
+ensemble:
+  no_trade_turnover: 0.03
+output_dir: output/experiment_r10_r9_notrade3_20y_proxy

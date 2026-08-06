@@ -1,0 +1,75 @@
+{
+  "assets": [
+    "XLK",
+    "IGV",
+    "XBI",
+    "XLY",
+    "IWM",
+    "TAN",
+    "KWEB",
+    "ARKK"
+  ],
+  "cache_sha256": "a710464ba915aeecb5094c566453bbb1ec8a77f03aaa7adcfc0bbb566bdf0c4e",
+  "column_count": 20,
+  "common_first_date": "2014-10-31",
+  "downloaded_at": "2026-07-29T04:04:08.796635-04:00",
+  "first_valid_date_by_asset": {
+    "ARKK": {
+      "close": "2014-10-31",
+      "open": "2014-10-31"
+    },
+    "BIL": {
+      "close": "2007-05-30",
+      "open": "2007-05-30"
+    },
+    "IGV": {
+      "close": "2005-01-03",
+      "open": "2005-01-03"
+    },
+    "IWM": {
+      "close": "2005-01-03",
+      "open": "2005-01-03"
+    },
+    "KWEB": {
+      "close": "2013-08-01",
+      "open": "2013-08-01"
+    },
+    "QQQ": {
+      "close": "2005-01-03",
+      "open": "2005-01-03"
+    },
+    "TAN": {
+      "close": "2008-04-15",
+      "open": "2008-04-15"
+    },
+    "XBI": {
+      "close": "2006-02-06",
+      "open": "2006-02-06"
+    },
+    "XLK": {
+      "close": "2005-01-03",
+      "open": "2005-01-03"
+    },
+    "XLY": {
+      "close": "2005-01-03",
+      "open": "2005-01-03"
+    }
+  },
+  "known_limitations": [
+    "Yahoo Finance is a research data source, not an execution venue.",
+    "ETF compositions change through time as part of the investable return series.",
+    "The common window begins at the latest inception among registered ETFs."
+  ],
+  "market_data_adjustment": "auto_adjust=True",
+  "market_data_source": "Yahoo Finance via yfinance",
+  "preregistration": "research/r11_cross_asset_shock_preregistration_2026-07-29.md",
+  "price_as_of": "2026-07-28",
+  "purpose": "Pre-registered cross-asset validation of the R11 structural shock reentry-brake mechanism; not a production quote source.",
+  "reference_assets": [
+    "QQQ",
+    "BIL"
+  ],
+  "requested_end_exclusive": "2026-07-31",
+  "requested_start": "2005-01-01",
+  "row_count": 2950
+}

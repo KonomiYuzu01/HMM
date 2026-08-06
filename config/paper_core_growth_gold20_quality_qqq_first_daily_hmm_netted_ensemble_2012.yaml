@@ -1,0 +1,5 @@
+parent_config: config/paper_core_growth_gold20_quality_qqq_first_daily_hmm_netted_ensemble.yaml
+member_overrides:
+  backtest_overrides:
+    oos_start: "2012-01-03"
+output_dir: output/paper_core_growth_gold20_quality_qqq_first_daily_hmm_netted_ensemble_2012

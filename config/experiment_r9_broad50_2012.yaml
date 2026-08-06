@@ -1,0 +1,13 @@
+parent_config: config/paper_core_growth_gold20_dual_reentry_floor45_goodvol_bear20_inverse_momentum_netted_ensemble_2012.yaml
+member_overrides:
+  portfolio_overrides:
+    turning_point_reentry:
+      zero_entry_bridge:
+        constructive_high_volatility_override:
+          maximum_downside_variation_share: 0.50
+          state_account_shares:
+            bull: 0.20
+            correction: 0.20
+            bear: 0.20
+            rebound: 0.20
+output_dir: output/experiment_r9_broad50_2012

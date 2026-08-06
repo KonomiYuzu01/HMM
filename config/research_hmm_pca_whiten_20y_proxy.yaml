@@ -1,0 +1,6 @@
+parent_config: config/research_hmm_gaussian_diagnostics_20y_proxy.yaml
+member_overrides:
+  model_overrides:
+    restarts: 5
+    feature_scaler: pca_whiten
+output_dir: output/research_hmm_pca_whiten_20y_proxy

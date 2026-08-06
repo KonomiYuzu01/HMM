@@ -1,0 +1,40 @@
+{
+  "generated_at_utc": "2026-07-28T14:07:52.991245+00:00",
+  "purpose": "Causal gold-regime research. Every trading signal must lag these end-of-day observations by at least one trading day.",
+  "series": {
+    "DFII10": {
+      "description": "10-Year Treasury Inflation-Indexed Security, Constant Maturity",
+      "url": "https://fred.stlouisfed.org/graph/fredgraph.csv?id=DFII10",
+      "source": "Federal Reserve Bank of St. Louis FRED",
+      "raw_sha256": "586e16121e3987e5cec107642016ae96fee6100707e2dcf5294e14d3a0661239",
+      "first_observation": "2003-01-02",
+      "last_observation": "2026-07-24",
+      "valid_observations": 5894,
+      "missing_observations": 253
+    },
+    "DTWEXBGS": {
+      "description": "Nominal Broad U.S. Dollar Index",
+      "url": "https://fred.stlouisfed.org/graph/fredgraph.csv?id=DTWEXBGS",
+      "source": "Federal Reserve Bank of St. Louis FRED",
+      "raw_sha256": "d9cc6a2f607514cdcf528b36492812ddde37ec1447b3218533a0fc9705049bbb",
+      "first_observation": "2006-01-02",
+      "last_observation": "2026-07-24",
+      "valid_observations": 5154,
+      "missing_observations": 211
+    },
+    "T10YIE": {
+      "description": "10-Year Breakeven Inflation Rate",
+      "url": "https://fred.stlouisfed.org/graph/fredgraph.csv?id=T10YIE",
+      "source": "Federal Reserve Bank of St. Louis FRED",
+      "raw_sha256": "01f6b62bac98d78f0b4f6deae01c184048f41766f819ad57cd38760e25ecbab5",
+      "first_observation": "2003-01-02",
+      "last_observation": "2026-07-27",
+      "valid_observations": 5895,
+      "missing_observations": 253
+    }
+  },
+  "rows": 6148,
+  "first_date": "2003-01-02",
+  "last_date": "2026-07-27",
+  "output_sha256": "be25910661317cbf1c24e96858c52c49ad430affd366ae8feaffa32bc6e4715b"
+}

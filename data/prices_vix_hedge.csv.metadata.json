@@ -1,0 +1,51 @@
+{
+  "cache_sha256": "ba2b0f87c7e200bf2890452bbaafbc3393259ed73eef5b2afebe8cedea3243d4",
+  "first_date": "2009-09-18",
+  "market_data_adjustment": "auto_adjust=True",
+  "market_data_source": "Yahoo Finance via yfinance",
+  "price_as_of": "2026-08-05",
+  "requested_end": null,
+  "requested_start": "2008-01-01",
+  "row_count": 4246,
+  "signal_history_fallbacks": {
+    "VIX": {
+      "authoritative": true,
+      "conflicting_observations": 4506,
+      "filled_observations": 0,
+      "first_source_date": "1990-01-02",
+      "latest_source_date": "2026-08-04",
+      "maximum_absolute_conflict": 2.610000839233397,
+      "output_first_date": "2009-09-18",
+      "output_last_date": "2026-08-05",
+      "overlapping_observations": 4677,
+      "remaining_missing_observations": 0,
+      "url": "https://cdn.cboe.com/api/global/us_indices/daily_prices/VIX_History.csv"
+    },
+    "VIX3M": {
+      "authoritative": true,
+      "conflicting_observations": 4061,
+      "filled_observations": 12,
+      "first_source_date": "2009-09-18",
+      "latest_source_date": "2026-08-05",
+      "maximum_absolute_conflict": 1.0499995422363284,
+      "output_first_date": "2009-09-18",
+      "output_last_date": "2026-08-05",
+      "overlapping_observations": 4233,
+      "remaining_missing_observations": 0,
+      "url": "https://cdn.cboe.com/api/global/us_indices/daily_prices/VIX3M_History.csv"
+    }
+  },
+  "ticker_map": {
+    "BOND": "IEF",
+    "CASH": "BIL",
+    "GOLD": "GLD",
+    "OIL": "DBC",
+    "QQQ": "QQQ",
+    "SEMIS": "SMH",
+    "SPX": "SPY",
+    "USD": "UUP",
+    "VIX": "^VIX",
+    "VIX3M": "^VIX3M",
+    "VIX_HEDGE": "VIXY"
+  }
+}

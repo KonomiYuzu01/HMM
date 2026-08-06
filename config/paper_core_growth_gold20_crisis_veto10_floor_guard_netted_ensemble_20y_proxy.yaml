@@ -1,0 +1,13 @@
+parent_config: config/paper_core_growth_gold20_lowvol_rebound_floor_guard_netted_ensemble_20y_proxy.yaml
+member_overrides:
+  portfolio_overrides:
+    turning_point_reentry:
+      volatility_conditioning:
+        state_override_maximum_slow_excess_return:
+          bear: -0.10
+        state_account_shares:
+          bear:
+            low: 0.40
+            medium: 0.40
+            high: 0.00
+output_dir: output/paper_core_growth_gold20_crisis_veto10_floor_guard_netted_ensemble_20y_proxy

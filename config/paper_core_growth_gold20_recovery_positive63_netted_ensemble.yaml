@@ -1,0 +1,16 @@
+parent_config: config/paper_core_growth_gold20_daily_risk_netted_ensemble.yaml
+member_overrides:
+  portfolio_overrides:
+    turning_point_reentry:
+      enabled: true
+      fast_days: 63
+      slow_days: 252
+      activate_only_when_risk_off: true
+      one_shot_per_rebound: false
+      state_account_shares:
+        bull: 0.40
+        correction: 0.00
+        bear: 0.00
+        rebound: 0.40
+      core_weights: {QQQ: 0.50, SEMIS: 0.50}
+output_dir: output/paper_core_growth_gold20_recovery_positive63_netted_ensemble

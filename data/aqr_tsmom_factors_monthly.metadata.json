@@ -1,0 +1,17 @@
+{
+  "csv_sha256": "bef2a5871e2676de25fc25ff1dc1c3b4205604661210f171a38e6c23bd3993f7",
+  "downloaded_on": "2026-07-29",
+  "extraction": {
+    "date_conversion": "Excel serial date using the 1899-12-30 epoch",
+    "first_valid_date": "1985-01-31",
+    "header_row": 18,
+    "last_valid_date": "2026-05-29",
+    "row_filter": "A:F all finite numeric values and A > 30000",
+    "valid_rows": 497
+  },
+  "official_source": "https://www.aqr.com/-/media/AQR/Documents/Insights/Data-Sets/Time-Series-Momentum-Factors-Monthly.xlsx",
+  "official_source_page": "https://www.aqr.com/Insights/Datasets/Time-Series-Momentum-Factors-Monthly",
+  "purpose": "R17 independent mechanism validation. Academic hypothetical factor returns; not live AQR fund returns.",
+  "sheet": "TSMOM Factors",
+  "xlsx_sha256": "33470930e2269c0d97be4732ec2d9c27ddbc69ac8133b059a263e27400263eeb"
+}

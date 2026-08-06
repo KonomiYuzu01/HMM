@@ -1,0 +1,9 @@
+parent_config: config/paper_core_growth_gold20_r9_staged_reentry_netted_ensemble.yaml
+production_freshness:
+  enabled: false
+member_overrides:
+  model_overrides:
+    emission_distribution: student_t
+    student_t_degrees_of_freedom: 5.0
+output_dir: output/research_hmm_student_t_df5
+

@@ -1,0 +1,13 @@
+parent_config: config/paper_core_growth_gold20_dual_reentry_inverse_momentum_netted_ensemble_20y_proxy.yaml
+member_overrides:
+  portfolio_overrides:
+    turning_point_reentry:
+      zero_entry_bridge:
+        constructive_high_volatility_override:
+          enabled: true
+          window_days: 20
+          maximum_downside_variation_share: 0.50
+          state_account_shares:
+            bull: 0.20
+            rebound: 0.20
+output_dir: output/paper_core_growth_gold20_dual_reentry_goodvol_inverse_momentum_netted_ensemble_20y_proxy

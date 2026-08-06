@@ -1,0 +1,40 @@
+name: paper_core_growth_gold20_r40_recursive_trend_cushion
+strategy_label: R40
+release: 2026-08-06-r40-v1
+status: staged_production
+parent_strategy: paper_core_growth_gold20_r38_convex_overlay
+purpose: Limit total non-cash exposure from the managed account's prior completed-close equity cushion while preserving full R38 participation near the account high-water mark.
+
+parameters:
+  floor_drawdown: -0.19
+  dual_trend_positive_multiplier: 100.0
+  other_trend_multiplier: 9.5
+  non_cash_cap_tier: 0.05
+  trend_rule: Both QQQ and SMH prior closes are above their respective prior-close 200-session moving averages.
+
+account_state:
+  equity_source: User-confirmed private managed-account value at the latest completed close.
+  high_water_rule: Maximum confirmed managed-account value since R40 activation; it may rise but never fall.
+  first_activation_rule: Initialize high-water to the confirmed managed-account value, so pre-activation gains and losses are not backfilled.
+  same_day_rule: One accepted account state per completed US trading date.
+  missing_state_response: Block the adjustment draft; never assume a passing drawdown state.
+
+allocation:
+  normal_state_base: Same-date qualified staged R38 target.
+  controlled_state_base: Same-date qualified R11 target; R38 incremental risk is disabled.
+  cap_rule: Scale every non-cash sleeve proportionally when its total exceeds the accepted cap; put the residual in cash or BIL.
+
+validation:
+  research_output: output/recursive_trend_cushion_production_candidate
+  maximum_historical_pre2008_drawdown: -0.20
+  maximum_modern_cagr_cost: -0.02
+  maximum_proxy_cagr_cost: -0.02
+  neighbor_drawdown_floor: -0.22
+  neighbor_modern_cagr_cost: -0.025
+
+execution:
+  require_same_date_parent: true
+  require_private_account_equity: true
+  require_private_high_water: true
+  require_completed_close: true
+  produce_broker_orders: false

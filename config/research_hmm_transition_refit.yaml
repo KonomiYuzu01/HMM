@@ -1,0 +1,12 @@
+parent_config: config/research_hmm_gaussian_diagnostics.yaml
+member_overrides:
+  model_overrides:
+    model_refit_days: 63
+    adaptive_refit:
+      enabled: true
+      mode: transition
+      assets: [QQQ, SEMIS]
+      fast_days: 21
+      slow_days: 63
+      calm_refit_days: 63
+output_dir: output/research_hmm_transition_refit

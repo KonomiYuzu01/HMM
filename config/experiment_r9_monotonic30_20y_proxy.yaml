@@ -1,0 +1,16 @@
+parent_config: config/paper_core_growth_gold20_dual_reentry_floor45_goodvol_bear20_inverse_momentum_netted_ensemble_20y_proxy.yaml
+member_overrides:
+  portfolio_overrides:
+    turning_point_reentry:
+      state_account_shares:
+        bull: 0.45
+        correction: 0.30
+        bear: 0.20
+        rebound: 0.45
+      volatility_conditioning:
+        state_account_shares:
+          rebound:
+            low: 0.45
+            medium: 0.30
+            high: 0.20
+output_dir: output/experiment_r9_monotonic30_20y_proxy

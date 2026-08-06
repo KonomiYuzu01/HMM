@@ -1,0 +1,4 @@
+parent_config: config/research_hmm_gaussian_diagnostics.yaml
+data_overrides:
+  regime_assets: [SPX, QQQ, BOND, GOLD, OIL, USD]
+output_dir: output/research_hmm_exclude_smh

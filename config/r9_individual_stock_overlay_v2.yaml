@@ -1,0 +1,129 @@
+name: r9_individual_stock_overlay_v2
+parent_strategy: paper_core_growth_gold20_r9_staged_reentry_netted_ensemble
+status: production_overlay
+purpose: Use individual stocks only when market stability and stock-specific evidence justify replacing QQQ or SMH.
+
+selection:
+  source: user_supplied
+  automatic_stock_selection: false
+  default_mode: evidence_gated
+  optional_mode: high_capture
+  high_capture_qualification: at_least_two_years_of_real_after_cost_records
+  default_treatment_for_unreviewed_stocks: exclude
+  unsupported_stock_treatment:
+    - exclude
+    - liquidate
+
+evidence_gated_eligibility:
+  confirmed_growth_threshold: 0.35
+  allowed_market_states:
+    - quiet_bull
+    - normal_bull
+  allowed_market_state_replacement_share: 0.50
+  other_market_state_replacement_share: 0.00
+  selected_basket_relative_strength_windows_days:
+    - 63
+    - 126
+  require_positive_relative_return_in_every_window: true
+  active_dispersion_signal_window_days: 63
+  active_dispersion_history_days: 756
+  maximum_active_dispersion_percentile: 0.67
+  qqq_and_smh_baskets_evaluated_separately: true
+  zero_budget_exit: next_session
+
+high_capture_mode:
+  rules_source: config/r9_individual_stock_overlay_v1.yaml
+  default_recommendation: false
+  warning: Higher stock exposure can capture genuine skill but materially increases wrong-selection risk.
+
+risk:
+  definition: stock_basket_return_minus_replaced_etf_return
+  annual_tracking_error_budget: 0.03
+  windows_days:
+    - 60
+    - 252
+  use_higher_window_estimate: true
+  covariance_estimator: ledoit_wolf
+  maximum_name_weight: 0.05
+  maximum_total_stock_weight: 0.20
+  weights_denominator: r9_managed_capital
+
+funding:
+  method: dollar_for_dollar_etf_replacement
+  reserve_extra_cash_for_risk_multiple: false
+  qqq_stocks_reduce: QQQ
+  semiconductor_stocks_reduce: SMH
+
+execution:
+  increase_and_regular_rebalance: month_end
+  risk_budget_zero_exit: next_session
+  apply_r9_no_trade_threshold: true
+  apply_r9_tranche_limit: true
+
+validation:
+  fixed_backtest_end: 2025-12-31
+  random_baskets: 40
+  fixed_stress_baskets: 6
+  assumed_overlay_cost_bps: 15
+  median_cagr_2015_2025: 0.195740
+  cagr_10pct_2015_2025: 0.194170
+  median_max_drawdown_2015_2025: -0.163066
+  max_drawdown_10pct_2015_2025: -0.166509
+  recent_2022_2025_median_relative_log_return: 0.000618
+  recent_2022_2025_relative_log_return_10pct: -0.001777
+  recent_2022_2025_share_needing_no_extra_selection_return: 0.70
+  recent_2022_2025_90pct_break_even_selection_alpha: 0.165708
+  complete_block_bootstrap_median_ci:
+    - -0.0013
+    - 0.0044
+  complete_block_bootstrap_median_probability_positive: 0.845
+  revalidation_2026_07_27:
+    production_decision: retain_v2_without_rule_change
+    tested_directions:
+      - continuous_relative_strength_sizing
+      - gradual_dispersion_scaling
+      - benchmark_specific_dispersion_gates
+      - maximum_group_systemic_dispersion
+      - overlay_no_trade_bands
+    reason: No candidate improved both development and recent downside outcomes without a material offset.
+    report: output/individual_stock_regime_optimization_20260727/optimization_summary.md
+
+current_snapshot:
+  market_data_as_of: 2026-07-24
+  market_state: quiet_bull
+  market_state_as_of: 2026-07-22
+  active_dispersion_percentile: 0.867725
+  diagnostic_only_qqq_active_dispersion_percentile: 0.567460
+  diagnostic_only_semiconductor_active_dispersion_percentile: 0.879630
+  production_gate_remains_combined: true
+  evidence_gated_decision: etf_first
+  next_review: 2026-07-31_close
+
+data:
+  stock_source: Yahoo Finance adjusted close via yfinance
+  panel_risk_data_as_of: 2026-07-24
+  supported_stocks:
+    - NVDA
+    - AMD
+    - AVGO
+    - QCOM
+    - TXN
+    - AMAT
+    - LRCX
+    - KLAC
+    - MU
+    - INTC
+    - MCHP
+    - ADI
+    - MRVL
+    - ON
+    - TSM
+    - ASML
+    - MSFT
+    - AAPL
+    - AMZN
+    - GOOGL
+    - META
+    - NFLX
+    - CRM
+    - ADBE

@@ -1,0 +1,24 @@
+{
+  "cache_sha256": "e7998b29e61d2b59ef0b47f92ba3b945bf5b5418e616d68ebf1362367e4e9760",
+  "fetched_at_utc": "2026-07-29T10:22:54.466026+00:00",
+  "first_valid_date": {
+    "AQMIX": "2010-01-05",
+    "BIL": "2010-01-04",
+    "QSPIX": "2013-10-30"
+  },
+  "generator": "tools/evaluate_r19_diversified_alternative_return.py::download_prices",
+  "last_valid_date": {
+    "AQMIX": "2026-07-28",
+    "BIL": "2026-07-28",
+    "QSPIX": "2026-07-28"
+  },
+  "market_data_adjustment": "auto_adjust=False; Adj Close field selected",
+  "market_data_source": "Yahoo Finance via yfinance",
+  "purpose": "R19 actual diversified alternative-return validation; research total-return data, not an execution quote",
+  "row_count": 4166,
+  "tickers": [
+    "AQMIX",
+    "QSPIX",
+    "BIL"
+  ]
+}

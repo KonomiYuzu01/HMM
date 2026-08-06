@@ -1,0 +1,6 @@
+parent_config: config/paper_core_growth_gold20_lowvol_rebound_floor_guard_netted_ensemble.yaml
+member_overrides:
+  portfolio_overrides:
+    turning_point_reentry:
+      fast_days: 84
+output_dir: output/paper_core_growth_gold20_lowvol_rebound_fast84_floor_guard_netted_ensemble

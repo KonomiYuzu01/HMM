@@ -1,0 +1,7 @@
+parent_config: config/paper_core_growth_gold20_r9_staged_reentry_netted_ensemble_20y_proxy.yaml
+member_overrides:
+  portfolio_overrides:
+    strategic_core_weights: {QQQ: 0.50, SEMIS: 0.50, GOLD: 0.00}
+    risk_off_defensive_trend:
+      assets: [BOND, GOLD, OIL, USD]
+output_dir: output/experiment_r9_growth_core_gold00_full_defense_20y_proxy

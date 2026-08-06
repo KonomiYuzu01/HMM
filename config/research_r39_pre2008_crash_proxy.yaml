@@ -1,0 +1,9 @@
+parent_config: config/paper_core_growth_gold20_r9_staged_reentry_netted_ensemble_20y_proxy.yaml
+data_overrides:
+  start: "1926-07-01"
+  end: "2008-01-01"
+  cache: data/prices_pre2008_crash_proxy.csv
+member_overrides:
+  backtest_overrides:
+    oos_start: "1931-01-02"
+output_dir: output/research_r39_pre2008_crash_proxy_r9

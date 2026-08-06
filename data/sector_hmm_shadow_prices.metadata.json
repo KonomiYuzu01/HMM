@@ -1,0 +1,101 @@
+{
+  "generated_at_utc": "2026-08-05T14:36:32.909697+00:00",
+  "purpose": "Isolated research only; never consumed by production or order generation.",
+  "adjustment": "auto_adjust=True",
+  "sources": {
+    "SPY": {
+      "source": "Yahoo Finance adjusted close via yfinance",
+      "first_observation": "2006-01-03",
+      "last_observation": "2026-08-05",
+      "valid_observations": 5179
+    },
+    "IEF": {
+      "source": "Yahoo Finance adjusted close via yfinance",
+      "first_observation": "2006-01-03",
+      "last_observation": "2026-08-05",
+      "valid_observations": 5179
+    },
+    "HYG": {
+      "source": "Yahoo Finance adjusted close via yfinance",
+      "first_observation": "2007-04-11",
+      "last_observation": "2026-08-05",
+      "valid_observations": 4861
+    },
+    "BIL": {
+      "source": "Yahoo Finance adjusted close via yfinance",
+      "first_observation": "2007-05-30",
+      "last_observation": "2026-08-05",
+      "valid_observations": 4827
+    },
+    "XLC": {
+      "source": "Yahoo Finance adjusted close via yfinance",
+      "first_observation": "2018-06-19",
+      "last_observation": "2026-08-05",
+      "valid_observations": 2043
+    },
+    "XLY": {
+      "source": "Yahoo Finance adjusted close via yfinance",
+      "first_observation": "2006-01-03",
+      "last_observation": "2026-08-05",
+      "valid_observations": 5179
+    },
+    "XLP": {
+      "source": "Yahoo Finance adjusted close via yfinance",
+      "first_observation": "2006-01-03",
+      "last_observation": "2026-08-05",
+      "valid_observations": 5179
+    },
+    "XLE": {
+      "source": "Yahoo Finance adjusted close via yfinance",
+      "first_observation": "2006-01-03",
+      "last_observation": "2026-08-05",
+      "valid_observations": 5179
+    },
+    "XLF": {
+      "source": "Yahoo Finance adjusted close via yfinance",
+      "first_observation": "2006-01-03",
+      "last_observation": "2026-08-05",
+      "valid_observations": 5179
+    },
+    "XLV": {
+      "source": "Yahoo Finance adjusted close via yfinance",
+      "first_observation": "2006-01-03",
+      "last_observation": "2026-08-05",
+      "valid_observations": 5179
+    },
+    "XLI": {
+      "source": "Yahoo Finance adjusted close via yfinance",
+      "first_observation": "2006-01-03",
+      "last_observation": "2026-08-05",
+      "valid_observations": 5179
+    },
+    "XLB": {
+      "source": "Yahoo Finance adjusted close via yfinance",
+      "first_observation": "2006-01-03",
+      "last_observation": "2026-08-05",
+      "valid_observations": 5179
+    },
+    "XLRE": {
+      "source": "Yahoo Finance adjusted close via yfinance",
+      "first_observation": "2015-10-08",
+      "last_observation": "2026-08-05",
+      "valid_observations": 2721
+    },
+    "XLK": {
+      "source": "Yahoo Finance adjusted close via yfinance",
+      "first_observation": "2006-01-03",
+      "last_observation": "2026-08-05",
+      "valid_observations": 5179
+    },
+    "XLU": {
+      "source": "Yahoo Finance adjusted close via yfinance",
+      "first_observation": "2006-01-03",
+      "last_observation": "2026-08-05",
+      "valid_observations": 5179
+    }
+  },
+  "output_sha256": "a27a145c6ad4c0db0d4acacd81a758a6e2d147ed0ddf5807628d1aebdb94a5c1",
+  "rows": 5179,
+  "first_date": "2006-01-03",
+  "last_date": "2026-08-05"
+}

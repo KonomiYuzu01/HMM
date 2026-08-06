@@ -1,0 +1,24 @@
+parent_config: config/paper_core_growth_gold20_lowvol_inverse_momentum_floor_guard_netted_ensemble_2012.yaml
+member_overrides:
+  portfolio_overrides:
+    turning_point_reentry:
+      fast_days: 20
+      minimum_current_growth_exposure: 0.00
+      state_account_shares:
+        bull: 0.20
+        correction: 0.00
+        bear: 0.00
+        rebound: 0.20
+      volatility_conditioning:
+        estimator: standard
+        state_account_shares:
+          bull:
+            low: 0.20
+            medium: 0.20
+            high: 0.00
+          rebound:
+            low: 0.20
+            medium: 0.20
+            high: 0.00
+      core_weights: {QQQ: 1.00, SEMIS: 0.00}
+output_dir: output/paper_core_growth_gold20_zero_bridge_qqq20_momentum_gate_netted_ensemble_2012

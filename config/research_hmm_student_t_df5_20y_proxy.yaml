@@ -1,0 +1,8 @@
+parent_config: config/experiment_r9_broad50_stage35_d10_20y_proxy.yaml
+production_freshness:
+  enabled: false
+member_overrides:
+  model_overrides:
+    emission_distribution: student_t
+    student_t_degrees_of_freedom: 5.0
+output_dir: output/research_hmm_student_t_df5_20y_proxy

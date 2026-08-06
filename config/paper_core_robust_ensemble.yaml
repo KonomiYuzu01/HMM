@@ -1,0 +1,13 @@
+base_config: config/paper_core_stable.yaml
+random_seeds: [7, 42, 123]
+
+member_overrides:
+  max_gross_leverage: 1.0
+
+ensemble:
+  rebalance_every_days: 21
+  calendar_anchored_schedule: true
+  no_trade_turnover: 0.01
+  cost_bps_per_dollar_traded: 7.5
+
+output_dir: output/paper_core_robust_ensemble

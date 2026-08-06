@@ -1,0 +1,86 @@
+name: r9_individual_stock_overlay_v1
+parent_strategy: paper_core_growth_gold20_r9_staged_reentry_netted_ensemble
+status: production_overlay
+purpose: Express user-supplied stock-selection skill without changing the R9 core allocation.
+
+selection:
+  source: user_supplied
+  automatic_stock_selection: false
+  default_treatment_for_unreviewed_stocks: exclude
+  unsupported_stock_treatment:
+    - exclude
+    - liquidate
+
+eligibility:
+  confirmed_growth_threshold: 0.35
+  quiet_bull_replacement_share: 0.50
+  normal_bull_replacement_share: 0.50
+  fragile_bull_replacement_share: 0.25
+  rebound_replacement_share: 0.25
+  other_replacement_share: 0.00
+  zero_budget_exit: next_session
+
+risk:
+  definition: stock_basket_return_minus_replaced_etf_return
+  annual_tracking_error_budget: 0.03
+  windows_days:
+    - 60
+    - 252
+  use_higher_window_estimate: true
+  covariance_estimator: ledoit_wolf
+  maximum_name_weight: 0.05
+  maximum_total_stock_weight: 0.20
+  weights_denominator: r9_managed_capital
+
+funding:
+  method: dollar_for_dollar_etf_replacement
+  reserve_extra_cash_for_risk_multiple: false
+  qqq_stocks_reduce: QQQ
+  semiconductor_stocks_reduce: SMH
+
+execution:
+  increase_and_regular_rebalance: month_end
+  risk_budget_zero_exit: next_session
+  apply_r9_no_trade_threshold: true
+  apply_r9_tranche_limit: true
+
+validation:
+  fixed_backtest_end: 2025-12-31
+  random_baskets: 40
+  fixed_stress_baskets: 6
+  assumed_overlay_cost_bps: 15
+  median_cagr_2015_2025: 0.197806
+  cagr_10pct_2015_2025: 0.188355
+  median_max_drawdown_2015_2025: -0.163555
+  max_drawdown_10pct_2015_2025: -0.174604
+  recent_2022_2025_median_break_even_selection_alpha: 0.04221
+  recent_2022_2025_90pct_break_even_selection_alpha: 0.14740
+
+data:
+  stock_source: Yahoo Finance adjusted close via yfinance
+  panel_risk_data_as_of: 2026-07-24
+  supported_stocks:
+    - NVDA
+    - AMD
+    - AVGO
+    - QCOM
+    - TXN
+    - AMAT
+    - LRCX
+    - KLAC
+    - MU
+    - INTC
+    - MCHP
+    - ADI
+    - MRVL
+    - ON
+    - TSM
+    - ASML
+    - MSFT
+    - AAPL
+    - AMZN
+    - GOOGL
+    - META
+    - NFLX
+    - CRM
+    - ADBE

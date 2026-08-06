@@ -1,0 +1,5 @@
+parent_config: config/research_hmm_gaussian_diagnostics_20y_proxy.yaml
+member_overrides:
+  model_overrides:
+    feature_clip_quantile: 0.005
+output_dir: output/research_hmm_clip005_20y_proxy

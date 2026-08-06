@@ -1,0 +1,112 @@
+name: paper_core_growth_gold20_r10_capital_efficient_guard
+release: 2026-07-27-r10-v1
+status: staged_production
+parent_strategy: paper_core_growth_gold20_r9_staged_reentry_netted_ensemble
+purpose: Preserve R9 market-regime and recovery logic while using a bounded capital-efficient gold sleeve and a causal SMH gap guard.
+
+capital_efficiency:
+  instrument: GDE
+  mechanism: Approximately 90% U.S. large-cap equity plus 90% gold futures per dollar invested.
+  replaced_asset: GOLD
+  maximum_gold_sleeve_substitution_fraction: 0.50
+  growth_gate_denominator: 0.80
+  account_weight_no_trade_band: 0.02
+  financing_aware_proxy:
+    SPX: 0.90
+    GOLD: 0.90
+    CASH: -0.80
+  live_tracking_error_annualized: 0.091468
+  fund_expense_ratio: 0.0020
+
+smh_gap_guard:
+  signal_observed_at_open: true
+  execution_delay_trading_days: 1
+  absolute_smh_gap_trigger: -0.025
+  relative_smh_minus_qqq_gap_trigger: -0.005
+  minimum_pretrigger_smh_weight: 0.60
+  post_trigger_smh_cap: 0.15
+  overflow_asset: CASH
+  recovery_signal: SMH daily return minus QQQ daily return is positive
+  recovery_confirmations: 2
+  maximum_hold_trading_days: 4
+  modeled_emergency_slippage_bps: 20
+
+execution:
+  ordinary_assets_one_way_cost_bps: 7.5
+  gde_current_liquidity_one_way_cost_bps: 40
+  gde_stress_one_way_cost_bps: 75
+  gde_order_type: limit_only
+  block_market_orders: true
+  require_current_gde_quote: true
+  require_real_positions: true
+  preserve_gold_plus_gde_account_weight: true
+
+rollout:
+  initial_r10_share_of_managed_capital: 0.25
+  remaining_r9_share_of_managed_capital: 0.75
+  forward_freeze_price_as_of: 2026-07-24
+  first_forward_session: 2026-07-27
+  minimum_sessions_before_each_increase: 63
+  possible_r10_shares:
+    - 0.25
+    - 0.50
+    - 1.00
+  increase_requirements:
+    - complete_daily_signal_and_execution_log
+    - no_data_integrity_failure
+    - realized_gde_one_way_cost_not_above_75bps
+    - r10_relative_drawdown_not_worse_than_r9_by_more_than_2pct
+    - no_unresolved_operational_incident
+  immediate_order_blocks:
+    - stale_core_prices
+    - stale_gde_quote
+    - missing_real_positions
+    - missing_guard_state
+  fallback: Keep the affected capital in R9; do not liquidate solely because a rollout review fails.
+
+validation:
+  current_liquidity_normal_2015_2026:
+    cagr_delta_vs_r9: 0.017370
+    sharpe_delta_vs_r9: 0.053027
+    maximum_drawdown: -0.164704
+  current_liquidity_proxy_2006_2026:
+    cagr_delta_vs_r9: 0.007508
+    sharpe_delta_vs_r9: 0.011069
+    maximum_drawdown: -0.177175
+  live_gde_2022_2026:
+    cagr_delta_vs_r9: 0.014305
+    sharpe_delta_vs_r9: 0.016788
+    maximum_drawdown: -0.165037
+  tracking_bootstrap:
+    simulations: 5000
+    probability_all_objectives: 0.9816
+    cagr_delta_5pct: 0.006194
+    maximum_drawdown_5pct: -0.178482
+  frontier_family_reality_check:
+    candidate_paths: 9
+    normal_familywise_p_range:
+      - 0.015797
+      - 0.021596
+    proxy_familywise_p_range:
+      - 0.025395
+      - 0.034593
+    pass_at_5pct: true
+  complete_research_family_reality_check:
+    unique_paths_normal: 1696
+    unique_paths_proxy: 1806
+    normal_familywise_p_range:
+      - 0.131374
+      - 0.153969
+    proxy_familywise_p_range:
+      - 0.247151
+      - 0.275345
+    pass_at_5pct: false
+    production_implication: Use staged forward validation; do not present historical outperformance as fully selection-bias-free.
+
+data:
+  r9_output: output/paper_core_growth_gold20_r9_staged_reentry_netted_ensemble
+  core_open_close: data/adjusted_open_close_2011_present.csv
+  gde_open_close: data/retail_alternatives_open_close.csv
+  adjusted_close_research: data/retail_alternatives_adjusted_close.csv
+  data_audit: output/r10_selected_data_audit
+  output_dir: output/paper_core_growth_gold20_r10_capital_efficient_guard

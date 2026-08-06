@@ -1,0 +1,29 @@
+parent_config: config/paper_core_growth_gold20_daily_risk_netted_ensemble_20y_proxy.yaml
+member_overrides:
+  portfolio_overrides:
+    turning_point_reentry:
+      enabled: true
+      fast_days: 63
+      slow_days: 252
+      activate_only_when_risk_off: true
+      one_shot_per_rebound: false
+      minimum_current_growth_exposure: 0.20
+      state_account_shares:
+        bull: 0.40
+        correction: 0.00
+        bear: 0.40
+        rebound: 0.40
+      volatility_conditioning:
+        enabled: true
+        window_days: 20
+        threshold_lookback_days: 756
+        minimum_threshold_observations: 504
+        low_quantile: 0.45
+        high_quantile: 0.90
+        state_account_shares:
+          rebound:
+            low: 0.40
+            medium: 0.00
+            high: 0.00
+      core_weights: {QQQ: 0.50, SEMIS: 0.50}
+output_dir: output/paper_core_growth_gold20_lowvol_rebound_floor_guard_netted_ensemble_20y_proxy

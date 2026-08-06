@@ -1,0 +1,67 @@
+base_config: config/paper_core_tail_only_asset_risk_vix_hedge.yaml
+random_seeds: [7, 42, 123]
+member_overrides:
+  max_gross_leverage: 1.10
+  risk_off_growth_floor:
+    enabled: true
+    account_share: 0.20
+    disable_when_volatility_stressed: true
+    core_weights: {QQQ: 0.50, SEMIS: 0.50}
+  portfolio_overrides:
+    target_volatility: 0.25
+    strategic_core_weights: {QQQ: 0.40, SEMIS: 0.40, GOLD: 0.20}
+    optimizer_excluded_assets: [VIX_HEDGE]
+    leverage_trend_gate:
+      enabled: true
+      lookback_days: 252
+    vix_term_structure_guard:
+      enabled: true
+      spot_signal: VIX
+      three_month_signal: VIX3M
+      hard_veto: false
+    conditional_vix_hedge:
+      enabled: true
+      asset: VIX_HEDGE
+      spot_signal: VIX
+      three_month_signal: VIX3M
+      account_share: 0.04
+    relative_momentum_core:
+      enabled: true
+      anchor_asset: QQQ
+      tilt_asset: SEMIS
+      horizons: [126]
+      horizon_weights: [1.0]
+      skip_days: 0
+      base_tilt_weight: 0.50
+      max_tilt: 0.50
+    asset_aware_growth_risk:
+      enabled: true
+      assets: [QQQ, SEMIS]
+      fast_days: 20
+      slow_days: 60
+      target_volatility: 0.20
+      volatility_estimator: jump_aware
+      correlation_estimator: stress_max
+      daily_reduction: true
+      scheduled_rebalance: true
+      activation_mode: zero_growth_entry
+      allocation_method: total_volatility
+      activate_only_when_breached: true
+      cap_total_volatility: false
+      maximum_core_weights: {SEMIS: 0.50}
+    survival_governor:
+      enabled: true
+      risk_assets: [SPX, QQQ, SEMIS, BOND, GOLD, OIL, USD]
+      horizons: [20, 60, 126]
+      long_horizon_days: 252
+      activation_stress_ratio: 1.4142135623730951
+      target_volatility: 0.20
+      restore_to_alpha_target: true
+      novelty:
+        enabled: false
+ensemble:
+  rebalance_every_days: 21
+  calendar_anchored_schedule: true
+  no_trade_turnover: 0.01
+  cost_bps_per_dollar_traded: 7.5
+output_dir: output/paper_core_growth_gold20_survival_shift_daily_risk_ensemble

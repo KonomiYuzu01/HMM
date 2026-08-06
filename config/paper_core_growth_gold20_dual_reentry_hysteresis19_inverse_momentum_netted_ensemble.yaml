@@ -1,0 +1,17 @@
+parent_config: config/paper_core_growth_gold20_dual_reentry_inverse_momentum_netted_ensemble.yaml
+member_overrides:
+  portfolio_overrides:
+    turning_point_reentry:
+      zero_entry_bridge:
+        state_account_shares:
+          bull: 0.19
+          rebound: 0.19
+        volatility_conditioning:
+          state_account_shares:
+            bull:
+              low: 0.19
+              medium: 0.19
+            rebound:
+              low: 0.19
+              medium: 0.19
+output_dir: output/paper_core_growth_gold20_dual_reentry_hysteresis19_inverse_momentum_netted_ensemble

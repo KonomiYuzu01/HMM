@@ -1,0 +1,18 @@
+parent_config: config/experiment_r9_broad50_2012.yaml
+member_overrides:
+  portfolio_overrides:
+    turning_point_reentry:
+      zero_entry_bridge:
+        maximum_current_growth_exposure: 0.35
+        path_conditioning:
+          enabled: true
+          minimum_confirmation_days: 1
+          staging_days: 10
+          initial_account_share: 0.20
+        constructive_high_volatility_override:
+          state_account_shares:
+            bull: 0.35
+            correction: 0.35
+            bear: 0.35
+            rebound: 0.35
+output_dir: output/experiment_r9_broad50_stage35_d10_2012

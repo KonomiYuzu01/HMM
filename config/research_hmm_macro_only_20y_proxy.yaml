@@ -1,0 +1,4 @@
+parent_config: config/research_hmm_gaussian_diagnostics_20y_proxy.yaml
+data_overrides:
+  regime_assets: [SPX, BOND, GOLD, OIL, USD]
+output_dir: output/research_hmm_macro_only_20y_proxy

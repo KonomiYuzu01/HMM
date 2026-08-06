@@ -1,0 +1,12 @@
+parent_config: config/paper_core_growth_gold20_r9_staged_reentry_netted_ensemble.yaml
+member_overrides:
+  portfolio_overrides:
+    strategic_core_weights: {QQQ: 0.475, SEMIS: 0.475, GOLD: 0.05}
+    risk_off_defensive_trend:
+      assets: [BOND, GOLD, OIL, USD]
+    diversifier_trend_sleeve:
+      enabled: true
+      assets: [BOND, GOLD, OIL, USD]
+      account_share: 0.10
+      volatility_days: 60
+output_dir: output/experiment_r9_growth_core_gold05_multi_trend10

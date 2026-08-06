@@ -1,0 +1,21 @@
+{
+  "cache_sha256": "9ee28886ca7b496899d39c20e8fc050330c1c6a09e80392acab72fa76a1c0e71",
+  "fetched_at_utc": "2026-07-29T09:59:55.627211+00:00",
+  "first_valid_date": {
+    "AQMIX": "2010-01-05",
+    "BIL": "2010-01-04"
+  },
+  "generator": "tools/evaluate_r16_portable_managed_futures.py::download_prices",
+  "last_valid_date": {
+    "AQMIX": "2026-07-28",
+    "BIL": "2026-07-28"
+  },
+  "market_data_adjustment": "auto_adjust=False; Adj Close field selected",
+  "market_data_source": "Yahoo Finance via yfinance",
+  "purpose": "R16 actual managed-futures portable-alpha validation; research data, not an execution quote",
+  "row_count": 4166,
+  "tickers": [
+    "AQMIX",
+    "BIL"
+  ]
+}

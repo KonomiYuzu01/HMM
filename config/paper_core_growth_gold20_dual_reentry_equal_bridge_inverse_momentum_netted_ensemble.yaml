@@ -1,0 +1,7 @@
+parent_config: config/paper_core_growth_gold20_dual_reentry_inverse_momentum_netted_ensemble.yaml
+member_overrides:
+  portfolio_overrides:
+    turning_point_reentry:
+      zero_entry_bridge:
+        core_weights: {QQQ: 0.50, SEMIS: 0.50}
+output_dir: output/paper_core_growth_gold20_dual_reentry_equal_bridge_inverse_momentum_netted_ensemble

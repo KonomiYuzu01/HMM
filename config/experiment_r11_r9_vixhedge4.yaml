@@ -1,0 +1,10 @@
+parent_config: config/paper_core_growth_gold20_r9_staged_reentry_netted_ensemble.yaml
+member_overrides:
+  portfolio_overrides:
+    conditional_vix_hedge:
+      enabled: true
+      asset: VIX_HEDGE
+      spot_signal: VIX
+      three_month_signal: VIX3M
+      account_share: 0.04
+output_dir: output/experiment_r11_r9_vixhedge4

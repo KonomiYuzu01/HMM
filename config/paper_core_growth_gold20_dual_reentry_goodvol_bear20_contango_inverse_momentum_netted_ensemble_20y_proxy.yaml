@@ -1,0 +1,8 @@
+parent_config: config/paper_core_growth_gold20_dual_reentry_goodvol_bear20_inverse_momentum_netted_ensemble_20y_proxy.yaml
+member_overrides:
+  portfolio_overrides:
+    turning_point_reentry:
+      zero_entry_bridge:
+        constructive_high_volatility_override:
+          require_vix_contango: true
+output_dir: output/paper_core_growth_gold20_dual_reentry_goodvol_bear20_contango_inverse_momentum_netted_ensemble_20y_proxy

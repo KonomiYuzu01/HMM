@@ -1,0 +1,9 @@
+parent_config: config/paper_core_growth_gold20_dual_reentry_goodvol_bear20_jump_inverse_momentum_netted_ensemble_20y_proxy.yaml
+member_overrides:
+  portfolio_overrides:
+    turning_point_reentry:
+      zero_entry_bridge:
+        path_conditioning:
+          enabled: true
+          minimum_confirmation_days: 3
+output_dir: output/paper_core_growth_gold20_dual_reentry_goodvol_bear20_jump_confirm3_inverse_momentum_netted_ensemble_20y_proxy

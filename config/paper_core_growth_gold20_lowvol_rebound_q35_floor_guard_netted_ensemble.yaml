@@ -1,0 +1,7 @@
+parent_config: config/paper_core_growth_gold20_lowvol_rebound_floor_guard_netted_ensemble.yaml
+member_overrides:
+  portfolio_overrides:
+    turning_point_reentry:
+      volatility_conditioning:
+        low_quantile: 0.35
+output_dir: output/paper_core_growth_gold20_lowvol_rebound_q35_floor_guard_netted_ensemble

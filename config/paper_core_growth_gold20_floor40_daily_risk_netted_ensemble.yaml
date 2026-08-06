@@ -1,0 +1,5 @@
+parent_config: config/paper_core_growth_gold20_daily_risk_netted_ensemble.yaml
+member_overrides:
+  risk_off_growth_floor:
+    account_share: 0.40
+output_dir: output/paper_core_growth_gold20_floor40_daily_risk_netted_ensemble

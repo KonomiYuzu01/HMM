@@ -1,0 +1,5 @@
+parent_config: config/paper_core_growth_gold20_selective_bridge_daily_hmm_netted_ensemble_2012.yaml
+member_overrides:
+  risk_off_growth_floor:
+    account_share: 0.30
+output_dir: output/paper_core_growth_gold20_floor30_selective_bridge_daily_hmm_netted_ensemble_2012

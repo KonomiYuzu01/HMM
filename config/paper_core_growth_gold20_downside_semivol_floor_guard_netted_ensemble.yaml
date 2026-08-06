@@ -1,0 +1,16 @@
+parent_config: config/paper_core_growth_gold20_lowvol_rebound_floor_guard_netted_ensemble.yaml
+member_overrides:
+  portfolio_overrides:
+    turning_point_reentry:
+      volatility_conditioning:
+        estimator: downside_semivolatility
+        state_account_shares:
+          bear:
+            low: 0.40
+            medium: 0.40
+            high: 0.00
+          rebound:
+            low: 0.40
+            medium: 0.40
+            high: 0.00
+output_dir: output/paper_core_growth_gold20_downside_semivol_floor_guard_netted_ensemble

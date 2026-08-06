@@ -1,0 +1,7 @@
+parent_config: config/paper_core_growth_gold20_lowvol_rebound_floor_guard_netted_ensemble.yaml
+member_overrides:
+  portfolio_overrides:
+    turning_point_reentry:
+      volatility_conditioning:
+        window_days: 30
+output_dir: output/paper_core_growth_gold20_lowvol_rebound_vol30_floor_guard_netted_ensemble

@@ -1,0 +1,13 @@
+parent_config: config/paper_core_growth_gold20_lowvol_rebound_floor_guard_netted_ensemble_20y_proxy.yaml
+member_overrides:
+  portfolio_overrides:
+    relative_momentum_core:
+      volatility_regime_gate:
+        enabled: true
+        window_days: 20
+        threshold_lookback_days: 756
+        minimum_threshold_observations: 504
+        low_quantile: 0.45
+        high_quantile: 0.90
+        allowed_states: [insufficient, low, medium]
+output_dir: output/paper_core_growth_gold20_lowvol_momentum_floor_guard_netted_ensemble_20y_proxy

@@ -1,0 +1,16 @@
+{
+  "cache_sha256": "1609a3b2c7442d8a1fec9f81f051de5a1d74e7d06e4e7f2715a6339843a3b7cd",
+  "first_date": "2008-01-02",
+  "generator": "tools/evaluate_retail_alternatives.py::download_adjusted_close",
+  "market_data_adjustment": "auto_adjust=False; Adj Close field selected",
+  "market_data_source": "Yahoo Finance via yfinance",
+  "price_as_of": "2026-07-24",
+  "purpose": "Retail alternative and live GDE tracking-error research.",
+  "row_count": 4669,
+  "selected_tracking_columns": [
+    "GDE",
+    "SPY",
+    "GLD",
+    "BIL"
+  ]
+}

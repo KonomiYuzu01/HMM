@@ -1,0 +1,29 @@
+hmm_config: config/paper_core_growth_fit_moments_2012.yaml
+disable_drawdown_overlay: true
+
+trend:
+  assets: [SPX, QQQ, SEMIS, BOND, GOLD, OIL, USD, CASH]
+  growth_assets: [QQQ, SEMIS]
+  cash_asset: CASH
+  oos_start: "2012-01-03"
+  momentum_days: 200
+  fast_volatility_days: 20
+  slow_volatility_days: 60
+  target_volatility: 0.20
+  max_gross_leverage: 1.75
+  rebalance_every_days: 5
+  calendar_anchored_schedule: true
+  no_trade_turnover: 0.01
+  cost_bps_per_dollar_traded: 7.5
+  financing_spread_bps: 100.0
+  annualization: 252
+  drawdown_overlay: []
+
+hybrid:
+  hmm_share: 0.50
+  rebalance_every_days: 21
+  calendar_anchored_schedule: true
+  no_trade_turnover: 0.01
+  cost_bps_per_dollar_traded: 7.5
+
+output_dir: output/paper_hmm_trend_hybrid_stable_2012

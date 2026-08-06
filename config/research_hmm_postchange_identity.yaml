@@ -1,0 +1,2 @@
+parent_config: config/research_hmm_gaussian_diagnostics.yaml
+output_dir: output/research_hmm_postchange_identity

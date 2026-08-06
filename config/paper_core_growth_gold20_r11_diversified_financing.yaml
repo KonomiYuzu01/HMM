@@ -1,0 +1,171 @@
+name: paper_core_growth_gold20_r11_diversified_financing
+strategy_label: R11
+release: 2026-07-27-r11-v1
+status: staged_production
+parent_strategy: paper_core_growth_gold20_r9_staged_reentry_netted_ensemble
+purpose: Preserve R9 regime and recovery logic while modestly scaling every non-cash sleeve, retaining the causal SMH gap guard, and using only a small GDE substitution.
+
+risk_budget:
+  target_non_cash_multiplier: 1.065
+  financing_leg: CASH
+  maximum_negative_cash_weight: -0.18
+  modeled_current_financing_spread_bps: 100
+  modeled_stress_financing_spread_bps: 150
+
+capital_efficiency:
+  instrument: GDE
+  mechanism: Approximately 90% U.S. large-cap equity plus 90% gold futures per dollar invested.
+  replaced_asset: GOLD
+  maximum_gold_sleeve_substitution_fraction: 0.10
+  growth_gate_denominator: 0.80
+  account_weight_no_trade_band: 0.02
+  financing_aware_proxy:
+    SPX: 0.90
+    GOLD: 0.90
+    CASH: -0.80
+  live_tracking_error_annualized: 0.091426
+  fund_expense_ratio: 0.0020
+
+smh_gap_guard:
+  signal_observed_at_open: true
+  execution_delay_trading_days: 1
+  absolute_smh_gap_trigger: -0.025
+  relative_smh_minus_qqq_gap_trigger: -0.005
+  minimum_pretrigger_smh_weight: 0.639
+  post_trigger_smh_cap: 0.15
+  overflow_asset: CASH
+  recovery_signal: SMH daily return minus QQQ daily return is positive
+  recovery_confirmations: 2
+  maximum_hold_trading_days: 4
+  modeled_emergency_slippage_bps: 20
+
+execution:
+  ordinary_assets_one_way_cost_bps: 7.5
+  stress_ordinary_assets_one_way_cost_bps: 15
+  gde_current_liquidity_one_way_cost_bps: 40
+  gde_stress_one_way_cost_bps: 75
+  gde_order_type: limit_only
+  block_market_orders: true
+  require_current_gde_quote: true
+  require_real_positions: true
+  preserve_gold_plus_gde_account_weight: true
+  require_financing_cost_observation: true
+
+rollout:
+  initial_r11_share_of_managed_capital: 0.25
+  remaining_r9_share_of_managed_capital: 0.75
+  forward_freeze_price_as_of: 2026-07-24
+  first_forward_session: 2026-07-27
+  minimum_sessions_before_each_increase: 63
+  possible_r11_shares:
+    - 0.25
+    - 0.50
+    - 1.00
+  increase_requirements:
+    - complete_daily_signal_and_execution_log
+    - no_data_integrity_failure
+    - realized_gde_one_way_cost_not_above_75bps
+    - realized_financing_spread_not_above_150bps
+    - r11_relative_drawdown_not_worse_than_r9_by_more_than_2pct
+    - no_unresolved_operational_incident
+  immediate_order_blocks:
+    - stale_core_prices
+    - stale_gde_quote
+    - missing_real_positions
+    - missing_guard_state
+  fallback: Keep the affected capital in R9; do not liquidate solely because a rollout review fails.
+
+validation:
+  full_candidate_current_liquidity_normal_2015_2026:
+    cagr_delta_vs_r9: 0.024835
+    sharpe_delta_vs_r9: 0.060411
+    maximum_drawdown: -0.163534
+  full_candidate_current_liquidity_proxy_2006_2026:
+    cagr_delta_vs_r9: 0.012429
+    sharpe_delta_vs_r9: 0.017729
+    maximum_drawdown: -0.176368
+  full_candidate_live_gde_2022_2026:
+    cagr_delta_vs_r9: 0.028906
+    sharpe_delta_vs_r9: 0.032555
+    maximum_drawdown: -0.163556
+  full_candidate_cost_stress_normal_2015_2026:
+    cagr_delta_vs_r9: 0.017956
+    sharpe_delta_vs_r9: 0.031764
+    maximum_drawdown: -0.175317
+  full_candidate_cost_stress_proxy_2006_2026:
+    cagr_delta_vs_r9: 0.008558
+    sharpe_delta_vs_r9: 0.001119
+    maximum_drawdown: -0.179476
+  full_candidate_cost_stress_live_gde_2022_2026:
+    cagr_delta_vs_r9: 0.022158
+    sharpe_delta_vs_r9: 0.010181
+    maximum_drawdown: -0.165623
+  initial_25pct_rollout_current_liquidity_normal_2015_2026:
+    cagr_delta_vs_r9: 0.006196
+    sharpe_delta_vs_r9: 0.016714
+    maximum_drawdown: -0.155753
+  initial_25pct_rollout_current_liquidity_proxy_2006_2026:
+    cagr_delta_vs_r9: 0.003117
+    sharpe_delta_vs_r9: 0.005168
+    maximum_drawdown: -0.168316
+  initial_25pct_rollout_live_gde_2022_2026:
+    cagr_delta_vs_r9: 0.007208
+    sharpe_delta_vs_r9: 0.009373
+    maximum_drawdown: -0.155759
+  initial_25pct_rollout_cost_stress_normal_2015_2026:
+    cagr_delta_vs_r9: 0.004501
+    sharpe_delta_vs_r9: 0.009280
+    maximum_drawdown: -0.168044
+  initial_25pct_rollout_cost_stress_proxy_2006_2026:
+    cagr_delta_vs_r9: 0.002156
+    sharpe_delta_vs_r9: 0.000812
+    maximum_drawdown: -0.171301
+  initial_25pct_rollout_cost_stress_live_gde_2022_2026:
+    cagr_delta_vs_r9: 0.005548
+    sharpe_delta_vs_r9: 0.003616
+    maximum_drawdown: -0.157737
+  tracking_bootstrap:
+    simulations: 5000
+    rollout_shares_tested:
+      - 0.25
+      - 0.50
+      - 1.00
+    probability_all_objectives_current: 1.00
+    probability_all_objectives_stress: 1.00
+    full_candidate_stress_maximum_drawdown_5pct: -0.179568
+  frontier_family_reality_check:
+    candidate_paths: 9
+    pass_at_5pct: true
+  strict_smh_family_reality_check:
+    unique_paths_normal: 1698
+    unique_paths_proxy: 1808
+    normal_familywise_p_values:
+      - 0.037393
+      - 0.048190
+      - 0.043191
+    proxy_familywise_p_values:
+      - 0.038392
+      - 0.039392
+      - 0.045191
+    pass_at_5pct: true
+    scope: All unique paths in the SMH causal guard parameter family plus the frozen R11 candidate; this is not every historical project experiment.
+  seed_robustness:
+    seeds:
+      - 7
+      - 42
+      - 123
+    cagr_and_sharpe_delta_positive_all_current_and_stress: true
+    ensemble_maximum_drawdown_below_18pct: true
+  leave_one_out:
+    minimum_leave_one_year_out_relative_log_return_normal: 0.014563
+    minimum_leave_one_year_out_relative_log_return_proxy: 0.008659
+    minimum_leave_one_event_out_relative_log_return_normal: 0.016122
+    minimum_leave_one_event_out_relative_log_return_proxy: 0.009144
+
+data:
+  r9_output: output/paper_core_growth_gold20_r9_staged_reentry_netted_ensemble
+  core_open_close: data/adjusted_open_close_2011_present.csv
+  gde_open_close: data/retail_alternatives_open_close.csv
+  adjusted_close_research: data/retail_alternatives_adjusted_close.csv
+  data_audit: output/r10_selected_data_audit
+  output_dir: output/paper_core_growth_gold20_r11_diversified_financing

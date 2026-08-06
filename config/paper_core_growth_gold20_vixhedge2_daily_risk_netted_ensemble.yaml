@@ -1,0 +1,6 @@
+parent_config: config/paper_core_growth_gold20_daily_risk_netted_ensemble.yaml
+member_overrides:
+  portfolio_overrides:
+    conditional_vix_hedge:
+      account_share: 0.02
+output_dir: output/paper_core_growth_gold20_vixhedge2_daily_risk_netted_ensemble

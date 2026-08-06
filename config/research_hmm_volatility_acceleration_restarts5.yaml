@@ -1,0 +1,7 @@
+parent_config: config/research_hmm_gaussian_diagnostics.yaml
+member_overrides:
+  feature_overrides:
+    components: [return, volatility, volatility_acceleration]
+  model_overrides:
+    restarts: 5
+output_dir: output/research_hmm_volatility_acceleration_restarts5

@@ -1,0 +1,53 @@
+{
+  "cache_sha256": "7cca42a8e2c1dfa386b458e006edaf7b15dccbe4c71e3968e0601c0cdf948007",
+  "completion_reference": "data/adjusted_open_close_2011_present.csv",
+  "completion_reference_as_of": "2026-07-24",
+  "completion_reference_sha256": "d3d52fccc69aca1228433da0551066ae6fdf4beebc409351f2b9e20f28c12d3f",
+  "end": "2026-07-24",
+  "market_data_adjustment": "auto_adjust=True",
+  "market_data_source": "Yahoo Finance via yfinance",
+  "official_signal_sources": {
+    "VIX": "https://cdn.cboe.com/api/global/us_indices/daily_prices/VIX_History.csv",
+    "VIX3M": "https://cdn.cboe.com/api/global/us_indices/daily_prices/VIX3M_History.csv"
+  },
+  "purpose": "Historical stress proxy only; not a production execution record.",
+  "rows": 6035,
+  "splices": {
+    "CASH": {
+      "actual": "BIL",
+      "actual_start": "2007-05-30",
+      "proxy": "synthetic index from ^IRX yield"
+    },
+    "GOLD": {
+      "actual": "GLD",
+      "actual_start": "2004-11-18",
+      "proxy": "GC=F"
+    },
+    "OIL": {
+      "actual": "DBC",
+      "actual_start": "2006-02-06",
+      "proxy": "^SPGSCI"
+    },
+    "SEMIS": {
+      "actual": "SMH",
+      "actual_start": "2011-12-20",
+      "proxy": "SOXX"
+    },
+    "USD": {
+      "actual": "UUP",
+      "actual_start": "2007-03-01",
+      "proxy": "DX-Y.NYB"
+    },
+    "VIX3M": {
+      "actual": "Cboe VIX3M official daily history",
+      "actual_start": "2009-09-18",
+      "proxy": "VIX before index history; neutral term ratio"
+    },
+    "VIX_HEDGE": {
+      "actual": "VIXY",
+      "actual_start": "2011-01-04",
+      "proxy": "flat before inception; no hypothetical hedge payoff"
+    }
+  },
+  "start": "2002-07-30"
+}

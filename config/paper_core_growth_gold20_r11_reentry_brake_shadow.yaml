@@ -1,0 +1,68 @@
+name: paper_core_growth_gold20_r11_reentry_brake_shadow
+strategy_label: R11 重入制动影子版
+release: 2026-07-29-r11-reentry-brake-shadow-v1
+status: production_shadow
+parent_strategy: paper_core_growth_gold20_r11_diversified_financing
+purpose: Observe whether a narrowly scoped brake can prevent premature growth re-entry after a structurally damaged semiconductor trend without duplicating R11's existing exit logic.
+
+reentry_brake:
+  previous_account_growth_loss_trigger: -0.03
+  minimum_previous_growth_weight: 0.50
+  qqq_63d_return_maximum: 0.0
+  semis_63d_return_maximum: 0.0
+  semis_126d_return_maximum: 0.0
+  vix_to_vix3m_minimum_exclusive: 1.0
+  growth_weight_cap_when_engaged: 0.35
+  trigger_action: Arm only; do not sell solely because the shock was observed.
+  engagement_action: Cap only a later increase in growth weight while structural damage persists.
+  release_condition: QQQ and semiconductor 63-day returns are both positive and VIX/VIX3M is at most 1 on a Thursday evaluation.
+  overflow_asset: CASH
+
+qualification:
+  point_estimate_gate_pass: true
+  multiple_comparisons_gate_pass: false
+  production_eligible: false
+  current_family_size: 20
+  cumulative_trials: 47
+  normal_familywise_p_value_range:
+    - 0.427714
+    - 0.439512
+  proxy_familywise_p_value_range:
+    - 0.472306
+    - 0.482703
+  required_maximum_familywise_p_value: 0.05
+  reason: The candidate affects too few independent historical episodes to distinguish the observed advantage from chance after repeated experimentation.
+
+validation:
+  normal_2015_2026:
+    cagr_delta_vs_r11: 0.003857
+    sharpe_delta_vs_r11: 0.029810
+    maximum_drawdown: -0.145066
+  proxy_2006_2026:
+    cagr_delta_vs_r11: 0.002360
+    sharpe_delta_vs_r11: 0.017003
+    maximum_drawdown: -0.152824
+  live_overlap_2022_2026:
+    cagr_delta_vs_r11: 0.000988
+    sharpe_delta_vs_r11: 0.019604
+    maximum_drawdown: -0.145088
+  cost_stress_all_full_windows_positive: true
+  affected_historical_episodes:
+    - 2018
+    - 2025
+
+execution:
+  orders_executable: false
+  real_capital_share: 0.0
+  forward_observation_required: true
+  minimum_forward_sessions_before_review: 63
+
+data:
+  r9_output: output/paper_core_growth_gold20_r9_staged_reentry_netted_ensemble
+  r11_output: output/paper_core_growth_gold20_r11_diversified_financing
+  r11_config: config/paper_core_growth_gold20_r11_diversified_financing.yaml
+  core_open_close: data/adjusted_open_close_2011_present.csv
+  market_prices: data/prices_vix_hedge.csv
+  evaluation_output: output/r11_selective_shock_memory
+  output_dir: output/paper_core_growth_gold20_r11_reentry_brake_shadow
+  forward_log: output/forward_monitoring/r11_reentry_brake_shadow_log.csv

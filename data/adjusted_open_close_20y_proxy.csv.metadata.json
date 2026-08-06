@@ -1,0 +1,44 @@
+{
+  "cache_sha256": "b92dc983cf08a4e77803cbd3d649ce4c0494143a3e7d5c2e950557e9d8ca244c",
+  "first_date": "2002-07-30",
+  "market_data_adjustment": "auto_adjust=True",
+  "market_data_source": "Yahoo Finance via yfinance",
+  "maximum_proxy_close_reconstruction_error": 0.0,
+  "price_as_of": "2026-07-24",
+  "proxy_close_sha256": "7cca42a8e2c1dfa386b458e006edaf7b15dccbe4c71e3968e0601c0cdf948007",
+  "proxy_close_source": "data/prices_20y_proxy.csv",
+  "purpose": "Historical execution stress proxy; not a production execution record.",
+  "row_count": 6035,
+  "splices": {
+    "CASH": {
+      "actual": "BIL",
+      "actual_start": "2007-05-30",
+      "proxy": "synthetic index from ^IRX yield"
+    },
+    "GOLD": {
+      "actual": "GLD",
+      "actual_start": "2004-11-18",
+      "proxy": "GC=F"
+    },
+    "OIL": {
+      "actual": "DBC",
+      "actual_start": "2006-02-06",
+      "proxy": "^SPGSCI"
+    },
+    "SEMIS": {
+      "actual": "SMH",
+      "actual_start": "2011-12-20",
+      "proxy": "SOXX"
+    },
+    "USD": {
+      "actual": "UUP",
+      "actual_start": "2007-03-01",
+      "proxy": "DX-Y.NYB"
+    },
+    "VIX_HEDGE": {
+      "actual": "VIXY",
+      "actual_start": "2011-01-04",
+      "proxy": "flat before inception"
+    }
+  }
+}

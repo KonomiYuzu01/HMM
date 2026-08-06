@@ -1,0 +1,22 @@
+{
+  "cache_sha256": "66f130d4ad4a4d8187903c64ddc46e262d6cd28b75f9b52703cc3c76b096038b",
+  "first_date": "2011-12-01",
+  "flat_proxy_bars": {
+    "VIX_HEDGE": []
+  },
+  "market_data_adjustment": "auto_adjust=True",
+  "market_data_source": "Yahoo Finance via yfinance",
+  "price_as_of": "2026-08-05",
+  "row_count": 3689,
+  "ticker_map": {
+    "BOND": "IEF",
+    "CASH": "BIL",
+    "GOLD": "GLD",
+    "OIL": "DBC",
+    "QQQ": "QQQ",
+    "SEMIS": "SMH",
+    "SPX": "SPY",
+    "USD": "UUP",
+    "VIX_HEDGE": "VIXY"
+  }
+}

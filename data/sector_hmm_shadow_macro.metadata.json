@@ -1,0 +1,50 @@
+{
+  "generated_at_utc": "2026-08-05T14:36:32.909697+00:00",
+  "purpose": "Isolated research only; never consumed by production or order generation.",
+  "sources": {
+    "DGS10": {
+      "url": "https://fred.stlouisfed.org/graph/fredgraph.csv?id=DGS10",
+      "source": "Federal Reserve Bank of St. Louis FRED",
+      "raw_sha256": "b9dddc2e96c427f450aabdd743ec36b6a02a2754264cedf9c262c6160344b465",
+      "first_observation": "1962-01-02",
+      "last_observation": "2026-08-03",
+      "valid_observations": 16131
+    },
+    "DFII10": {
+      "url": "https://fred.stlouisfed.org/graph/fredgraph.csv?id=DFII10",
+      "source": "Federal Reserve Bank of St. Louis FRED",
+      "raw_sha256": "0c33c1f72495192ca206800de735f55b5c8fbda46ea4d0bef303bc804cf0e105",
+      "first_observation": "2003-01-02",
+      "last_observation": "2026-08-03",
+      "valid_observations": 5900
+    },
+    "CPIAUCSL": {
+      "url": "https://fred.stlouisfed.org/graph/fredgraph.csv?id=CPIAUCSL",
+      "source": "Federal Reserve Bank of St. Louis FRED",
+      "raw_sha256": "2efffad3305f5adef58e84b06f268811123534805d5d7358f633cdb7e8c1aedb",
+      "first_observation": "1947-01-01",
+      "last_observation": "2026-06-01",
+      "valid_observations": 953
+    },
+    "T10Y2Y": {
+      "url": "https://fred.stlouisfed.org/graph/fredgraph.csv?id=T10Y2Y",
+      "source": "Federal Reserve Bank of St. Louis FRED",
+      "raw_sha256": "10767895ee6f40bcbe21ef36ded20fb265be47658a68047c1337e041b932e35f",
+      "first_observation": "1976-06-01",
+      "last_observation": "2026-08-04",
+      "valid_observations": 12540
+    },
+    "DTWEXBGS": {
+      "url": "https://fred.stlouisfed.org/graph/fredgraph.csv?id=DTWEXBGS",
+      "source": "Federal Reserve Bank of St. Louis FRED",
+      "raw_sha256": "88db7d787e99129e671015fcc581f3507d0a2c527804c285ab555c2b83cd8054",
+      "first_observation": "2006-01-02",
+      "last_observation": "2026-07-31",
+      "valid_observations": 5159
+    }
+  },
+  "output_sha256": "7c179cf5ede1d2cf28ccb63fbec734cac26b54caeb172e01c30fb3f86f169ba7",
+  "rows": 17253,
+  "first_date": "1947-01-01",
+  "last_date": "2026-08-04"
+}

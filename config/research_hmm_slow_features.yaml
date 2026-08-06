@@ -1,0 +1,5 @@
+parent_config: config/research_hmm_gaussian_diagnostics.yaml
+member_overrides:
+  feature_overrides:
+    components: [volatility, momentum]
+output_dir: output/research_hmm_slow_features

@@ -1,0 +1,67 @@
+name: paper_core_growth_gold20_r11_decision_authority
+release: 2026-07-29-r11-authority-v1
+status: production_control
+economic_strategy: paper_core_growth_gold20_r11_diversified_financing
+purpose: Separate market observation, exit authority, entry authority, and execution so that unqualified research cannot affect real capital.
+
+growth_assets:
+  - SPX
+  - QQQ
+  - SEMIS
+
+market_environment:
+  informational_only: true
+  uses_completed_close_only: true
+  shock_threshold_account_return: -0.03
+  normal_vix_term_ratio_boundary: 1.0
+  qqq_trend_sessions: 63
+  semis_fast_trend_sessions: 63
+  semis_medium_trend_sessions: 126
+
+authorities:
+  r11_base_allocator:
+    kind: base_target
+    status: approved
+    maximum_managed_capital_share: 1.0
+    evidence: config/paper_core_growth_gold20_r11_diversified_financing.yaml
+  smh_gap_exit:
+    kind: exit_only
+    status: approved
+    maximum_managed_capital_share: 1.0
+    evidence: output/r11_final_candidate_audit
+  gde_capital_efficiency:
+    kind: base_target
+    status: approved
+    maximum_managed_capital_share: 0.25
+    evidence: output/r11_final_candidate_audit
+  selective_reentry_brake:
+    kind: entry_only
+    status: rejected
+    maximum_managed_capital_share: 0.0
+    evidence: output/r11_selective_shock_memory/declared_family_reality_check.csv
+    rejection_reason: Multiple-comparison gate failed and the cross-asset generalization test had the wrong sign.
+  medium_damage_budget10:
+    kind: entry_only
+    status: rejected
+    maximum_managed_capital_share: 0.0
+    evidence: output/r11_entry_permission/metrics_by_period.csv
+    rejection_reason: Improved drawdown but reduced CAGR in normal, proxy, and live-overlap samples.
+  hierarchical_permission_10_35_full:
+    kind: entry_only
+    status: rejected
+    maximum_managed_capital_share: 0.0
+    evidence: output/r11_entry_permission/metrics_by_period.csv
+    rejection_reason: Faster repair tiers still reduced CAGR and failed the cumulative comparison audit.
+
+execution:
+  state_changes_can_emit_orders: false
+  require_explicit_base_or_approved_authority_proposal: true
+  require_complete_real_positions: true
+  inherit_r11_order_blockers: true
+  unapproved_rule_default: no_change
+
+data:
+  r9_output: output/paper_core_growth_gold20_r9_staged_reentry_netted_ensemble
+  r11_output: output/paper_core_growth_gold20_r11_diversified_financing
+  market_prices: data/prices_vix_hedge.csv
+  output_dir: output/paper_core_growth_gold20_r11_decision_authority

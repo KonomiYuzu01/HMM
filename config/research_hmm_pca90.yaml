@@ -1,0 +1,6 @@
+parent_config: config/research_hmm_gaussian_diagnostics.yaml
+member_overrides:
+  model_overrides:
+    restarts: 5
+    feature_scaler: pca90
+output_dir: output/research_hmm_pca90

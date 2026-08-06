@@ -1,0 +1,7 @@
+parent_config: config/paper_core_growth_gold20_confidence_blend_daily_hmm_netted_ensemble_2012.yaml
+member_overrides:
+  portfolio_overrides:
+    daily_hmm_state_filter:
+      recovery_quality:
+        decision_mode: hard_gate
+output_dir: output/paper_core_growth_gold20_selective_bridge_daily_hmm_netted_ensemble_2012

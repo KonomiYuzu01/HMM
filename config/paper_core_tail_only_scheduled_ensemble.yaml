@@ -1,0 +1,32 @@
+base_config: config/paper_core_tail_only_asset_risk.yaml
+random_seeds: [7, 42, 123]
+
+member_overrides:
+  max_gross_leverage: 1.0
+  risk_off_growth_floor:
+    enabled: true
+    account_share: 0.20
+    disable_when_volatility_stressed: true
+    core_weights:
+      QQQ: 0.50
+      SEMIS: 0.50
+  portfolio_overrides:
+    asset_aware_growth_risk:
+      enabled: true
+      assets: [QQQ, SEMIS]
+      fast_days: 20
+      slow_days: 60
+      target_volatility: 0.20
+      daily_reduction: false
+      scheduled_rebalance: true
+      activate_only_when_breached: true
+      maximum_core_weights:
+        SEMIS: 0.50
+
+ensemble:
+  rebalance_every_days: 21
+  calendar_anchored_schedule: true
+  no_trade_turnover: 0.01
+  cost_bps_per_dollar_traded: 7.5
+
+output_dir: output/paper_core_tail_only_scheduled_ensemble

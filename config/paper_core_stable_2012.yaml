@@ -1,0 +1,78 @@
+data:
+  tickers:
+    SPX: SPY
+    QQQ: QQQ
+    SEMIS: SMH
+    BOND: IEF
+    GOLD: GLD
+    OIL: DBC
+    USD: UUP
+    CASH: BIL
+  regime_assets: [SPX, QQQ, SEMIS, BOND, GOLD, OIL, USD]
+  cash_asset: CASH
+  start: "2008-01-01"
+  end: null
+  cache: "data/prices_high_cagr.csv"
+
+features:
+  volatility_days: 60
+  momentum_days: 20
+
+model:
+  lookback_days: 1008
+  validation_days: 126
+  candidate_states: [2, 3, 4]
+  template_count: 4
+  template_assignment: hungarian
+  conditional_moments_source: fit
+  calendar_anchored_schedule: true
+  model_refit_days: 21
+  order_selection_days: 63
+  n_iter: 125
+  restarts: 2
+  complexity_penalty: 0.02
+  template_smoothing: 0.12
+  covariance_floor: 1.0e-6
+  random_seed: 42
+
+portfolio:
+  risk_aversion: 4.0
+  turnover_penalty: 0.003
+  max_risky_weight: 0.70
+  conditional_mean_shrinkage: 0.60
+  conditional_covariance_shrinkage: 0.35
+  annual_return_floor: -0.10
+  annual_return_cap: 0.30
+  target_volatility: 0.20
+  no_trade_turnover: 0.01
+  cost_bps_per_dollar_traded: 7.5
+  financing_spread_bps: 100.0
+  trend_horizons: [21, 63, 126, 252]
+  trend_weights: [0.10, 0.20, 0.30, 0.40]
+  trend_forecast_scale: 0.08
+  trend_blend: 0.65
+  growth_assets: [SPX, QQQ, SEMIS, OIL]
+  stress_signal_asset: QQQ
+  stress_momentum_days: 200
+  stress_volatility_days: 20
+  stress_volatility_threshold: 0.30
+  stress_growth_multiplier: 0.0
+  strategic_core_blend: 1.0
+  strategic_core_weights:
+    QQQ: 0.50
+    SEMIS: 0.50
+  paper_regime_switch: true
+  paper_growth_assets: [QQQ, SEMIS]
+  paper_growth_weights: [0.50, 0.50]
+  allow_leverage: true
+  leverage_activation_score: 0.0
+  leverage_signal_assets: [QQQ, SEMIS]
+  max_gross_leverage: 1.75
+  drawdown_overlay: []
+
+backtest:
+  oos_start: "2012-01-03"
+  rebalance_every_days: 5
+  calendar_anchored_schedule: true
+  annualization: 252
+  output_dir: "output/paper_core_stable_2012"

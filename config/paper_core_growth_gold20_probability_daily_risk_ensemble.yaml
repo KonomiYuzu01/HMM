@@ -1,0 +1,31 @@
+base_config: config/paper_core_tail_only_asset_risk.yaml
+random_seeds: [7, 42, 123]
+member_overrides:
+  max_gross_leverage: 1.0
+  portfolio_overrides:
+    paper_regime_switch: false
+    paper_probability_allocation: true
+    continuous_probability_risk_target: false
+    favorable_probability_smoothing: 0.12
+    min_growth_exposure: 0.20
+    max_growth_exposure: 1.00
+    strategic_core_weights: {QQQ: 0.40, SEMIS: 0.40, GOLD: 0.20}
+    asset_aware_growth_risk:
+      enabled: true
+      assets: [QQQ, SEMIS]
+      fast_days: 20
+      slow_days: 60
+      target_volatility: 0.20
+      daily_reduction: true
+      scheduled_rebalance: true
+      activation_mode: zero_growth_entry
+      allocation_method: total_volatility
+      activate_only_when_breached: true
+      cap_total_volatility: false
+      maximum_core_weights: {SEMIS: 0.50}
+ensemble:
+  rebalance_every_days: 21
+  calendar_anchored_schedule: true
+  no_trade_turnover: 0.01
+  cost_bps_per_dollar_traded: 7.5
+output_dir: output/paper_core_growth_gold20_probability_daily_risk_ensemble
