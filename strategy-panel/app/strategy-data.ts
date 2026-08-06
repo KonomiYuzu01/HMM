@@ -10,6 +10,7 @@ const decisionAuthority = strategyLiveData.decisionAuthority;
 const relativeDamageVeto = strategyLiveData.relativeDamageVeto;
 const panelStatus = strategyLiveData.panelStatus;
 const recursiveTrendCushion = strategyLiveData.recursiveTrendCushion;
+const pputProtectedCapacity = strategyLiveData.pputProtectedCapacity;
 const activeStrategy = panelStatus.activeStrategy;
 const r39Active = activeStrategy === "R39";
 const volatilityAccelerationBlock =
@@ -71,6 +72,7 @@ export const strategySnapshot = {
     : panelStatus.fallbackReason,
   fallbackTechnicalReason: panelStatus.fallbackReason,
   recursiveTrendCushion: strategyLiveData.recursiveTrendCushion,
+  pputProtectedCapacity: strategyLiveData.pputProtectedCapacity,
   r11Reference: strategyLiveData.r11Reference,
 } as const;
 
@@ -163,7 +165,23 @@ export const decisionPipeline = [
     counterfactual: "若账户回到新高，安全垫恢复并允许完整 R38；若双趋势转弱，同样安全垫会使用更低的 9.5 倍，减仓更快。",
   },
   {
-    stage: "05 · 执行门控",
+    stage: "05 · R41 保护性容量",
+    source: "R41 · SPYM 5% 虚值长期看跌期权",
+    title: pputProtectedCapacity.productionEligible && pputProtectedCapacity.sameDate
+      ? pputProtectedCapacity.active
+        ? "R41 保护已确认，120% 上限可以参与计算"
+        : "R41 已通过资格，但尚未持有合格保护；继续使用 R40"
+      : "R41 尚未通过同日生产资格；继续使用 R40",
+    evidence: `现代净 CAGR ${formatPercent(pputProtectedCapacity.modernCagr)}、最大回撤 ${formatPercent(pputProtectedCapacity.modernMaxDrawdown)}；1931–2007 代理最深回撤 ${formatPercent(pputProtectedCapacity.historicalPre2008MaxDrawdown)}。研究已按保护名义每年 ${formatPercent(0.02)} 的额外实施拖累扣费。`,
+    rule: `期权覆盖 = SPYM 价格 × 100 × 合约数 ÷ 策略资金，目标 ${formatPercent(pputProtectedCapacity.targetCoverage, 0)}，只接受 ${formatPercent(pputProtectedCapacity.minimumCoverage, 0)}–${formatPercent(pputProtectedCapacity.maximumCoverage, 0)}。50 万美元、SPYM 90.52 美元时选择 ${pputProtectedCapacity.example500kContracts} 张，实际覆盖 ${formatPercent(pputProtectedCapacity.example500kCoverage, 2)}。`,
+    result: pputProtectedCapacity.active
+      ? `双趋势为正且安全垫为正常状态时，非现金上限可到 ${formatPercent(pputProtectedCapacity.normalNonCashCap, 0)}`
+      : "当前不启用 120% 扩展；R40 仍是实际账户保护层",
+    plainLanguage: "保护资格和实际持仓是两件事。只有账户里确实存在合格长仓看跌期权，系统才用这份保护换取额外上涨容量；没有就按原 R40 行事。",
+    counterfactual: `若实时报价、期权权限、整数合约覆盖或已持仓任一项未确认，立即失效关闭，不生成期权订单，也不把非现金上限提高到 ${formatPercent(pputProtectedCapacity.normalNonCashCap, 0)}。`,
+  },
+  {
+    stage: "06 · 执行门控",
     source: "账户建仓规则",
     title: strategyLiveData.ordersExecutable
       ? "目标与真实持仓都已完整"
@@ -559,6 +577,17 @@ export const decisionDrivers = [
 
 export const keyParameters = [
   {
+    label: "R41 保护性容量",
+    value: pputProtectedCapacity.productionEligible && pputProtectedCapacity.sameDate
+      ? pputProtectedCapacity.active
+        ? "已激活"
+        : "资格通过 · 未激活"
+      : "阻断",
+    currentUse: `目标覆盖 ${formatPercent(pputProtectedCapacity.targetCoverage, 0)}；合格带 ${formatPercent(pputProtectedCapacity.minimumCoverage, 0)}–${formatPercent(pputProtectedCapacity.maximumCoverage, 0)}`,
+    why: "用小额、明确的尾部保护交换正常趋势状态下的额外容量；没有真实保护就自动退回 R40",
+    tone: pputProtectedCapacity.active ? "active" : "standby",
+  },
+  {
     label: "R40 账户非现金上限",
     value: recursiveTrendCushion.productionEligible && recursiveTrendCushion.sameDate
       ? "已进入私有执行链"
@@ -663,6 +692,19 @@ export const keyParameters = [
 ] as const;
 
 export const parameterGroups = [
+  {
+    name: "R41 保护性容量（资格通过，当前未激活）",
+    summary: `中央现代净 CAGR ${formatPercent(pputProtectedCapacity.modernCagr)}；当前仍由 R40 执行`,
+    parameters: [
+      ["保护工具", "SPYM 月度长期看跌期权", "最高不超过现货 95% 的已上市行权价"],
+      ["目标 / 合格覆盖", `${formatPercent(pputProtectedCapacity.targetCoverage, 0)} / ${formatPercent(pputProtectedCapacity.minimumCoverage, 0)}–${formatPercent(pputProtectedCapacity.maximumCoverage, 0)}`, "按标的名义金额，不是按期权费占账户比例"],
+      ["50 万美元示例", `${pputProtectedCapacity.example500kContracts} 张 = ${formatPercent(pputProtectedCapacity.example500kCoverage, 2)}`, "以 SPYM 90.52 美元和每张 100 股计算"],
+      ["正常状态上限", formatPercent(pputProtectedCapacity.normalNonCashCap, 0), "仅在双 200 日趋势为正、安全垫正常且真实保护已确认时启用"],
+      ["最早建立窗口", `${strategyLiveData.nextExecutionEt}`, "最近完整收盘复核后，在下一常规开盘用实时盘口人工复核"],
+      ["失效关闭", "回退 R40", "权限、实时价差、整数覆盖或持仓缺一项都不激活 R41"],
+      ["不可消除的差异", "SPYM 与 PPUT/SPX 存在基差", "美式实物交割、价差、跟踪、税务与滚动时点可能偏离基准"],
+    ],
+  },
   {
     name: "R40 长期熊市账户保护",
     summary: recursiveTrendCushion.productionEligible && recursiveTrendCushion.sameDate

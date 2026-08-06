@@ -1,0 +1,8 @@
+{
+  "name": "Cboe S&P 500 5% Put Protection Index (PPUT) daily history",
+  "source_url": "https://cdn.cboe.com/api/global/us_indices/daily_prices/PPUT_History.csv",
+  "methodology_url": "https://cdn.cboe.com/api/global/us_indices/governance/PPUT_Methodology.pdf",
+  "downloaded_through": "2026-08-05",
+  "sha256": "0fe697e52a8713aba1b0be7845ad407f9fb0fc82dcfc7bfabf6554842fb0a21b",
+  "pre_history_treatment": "Overlay return is explicitly zero before 1986-06-30; no synthetic backfill."
+}

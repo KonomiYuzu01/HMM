@@ -232,6 +232,19 @@ test("uses the white-box R40 tier formula in the private account draft", () => {
   assert.ok(Math.abs(Object.values(target).reduce((sum, value) => sum + value, 0) - 1) < 1e-12);
 });
 
+test("explains the qualified but fail-closed R41 protection layer", async () => {
+  const response = await render("/");
+  const html = await response.text();
+  assert.equal(strategyLiveData.pputProtectedCapacity.productionEligible, true);
+  assert.equal(strategyLiveData.pputProtectedCapacity.active, false);
+  assert.equal(strategyLiveData.pputProtectedCapacity.example500kContracts, 3);
+  assert.ok(Math.abs(strategyLiveData.pputProtectedCapacity.example500kCoverage - 0.054312) < 1e-12);
+  assert.match(html, /R41 已通过资格，但尚未持有合格保护/);
+  assert.match(html, /3 张/);
+  assert.match(html, /5\.43%/);
+  assert.match(html, /继续使用 R40/);
+});
+
 test("ships the exact social preview dimensions", async () => {
   const preview = await readFile(new URL("../public/og-r39.png", import.meta.url));
   assert.equal(preview.subarray(1, 4).toString("ascii"), "PNG");

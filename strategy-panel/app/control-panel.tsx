@@ -908,6 +908,10 @@ SMH ETF 剩余额度：${holdingCalculation.managedStockPlan.budgets.SMH.remaini
                 <i>→</i>
                 <span>R39 集中度</span>
                 <i>→</i>
+                <span>R40 净值安全垫</span>
+                <i>→</i>
+                <span>R41 保护性容量</span>
+                <i>→</i>
                 <span>账户执行门控</span>
               </div>
 

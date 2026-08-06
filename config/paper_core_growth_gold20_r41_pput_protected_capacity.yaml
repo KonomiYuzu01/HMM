@@ -1,0 +1,46 @@
+name: paper_core_growth_gold20_r41_pput_protected_capacity
+strategy_label: R41
+release: 2026-08-06-r41-v1
+status: staged_production
+parent_strategy: paper_core_growth_gold20_r40_recursive_trend_cushion
+purpose: Add a small, explicit put-protection sleeve so dual-trend normal states can use up to 120% non-cash exposure without violating the historical 20% drawdown ceiling.
+
+parameters:
+  floor_drawdown: -0.19
+  dual_trend_positive_multiplier: 100.0
+  other_trend_multiplier: 20.0
+  non_cash_cap_tier: 0.05
+  normal_non_cash_cap: 1.20
+  target_put_coverage: 0.06
+  minimum_put_coverage: 0.05
+  maximum_put_coverage: 0.07
+  research_annual_implementation_drag: 0.02
+
+protection:
+  benchmark: Cboe PPUT
+  benchmark_rule: Long S&P 500 plus a monthly 5% out-of-the-money put; the strategy uses only the put return incremental to S&P 500.
+  production_instrument: SPYM listed long put
+  option_multiplier: 100
+  strike_rule: Highest listed put strike at or below 95% of current SPYM spot.
+  expiration_rule: Standard monthly third-Friday expiration; sell to close before the broker exercise cutoff and open the next monthly contract.
+  contract_rule: Choose the integer contract count nearest 6% underlying coverage only when implemented coverage remains in the qualified 5%-7% band.
+  fail_closed_rule: If the option holding, live quote, coverage band, or option permission is unconfirmed, do not extend the non-cash cap and keep R40 active.
+  basis_risk: SPYM options are American-style physically settled ETF options, while PPUT uses SPX options; tracking, exercise, bid-ask, tax, and roll differences remain.
+
+validation:
+  research_output: output/r41_pput_production_candidate
+  central_modern_cagr_minimum: 0.24
+  central_modern_cagr_maximum: 0.25
+  central_drawdown_floor: -0.20
+  neighbor_modern_cagr_floor: 0.239
+  neighbor_drawdown_floor: -0.205
+  frozen_pput_history: data/reference/cboe_pput_history.csv
+  frozen_pput_sha256: 0fe697e52a8713aba1b0be7845ad407f9fb0fc82dcfc7bfabf6554842fb0a21b
+
+execution:
+  require_same_date_parent: true
+  require_confirmed_long_put: true
+  require_live_option_quote: true
+  require_option_permission: true
+  produce_broker_orders: false
+  hold_through_automatic_exercise: false

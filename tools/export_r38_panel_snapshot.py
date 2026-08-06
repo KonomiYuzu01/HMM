@@ -25,6 +25,8 @@ R39_RESEARCH_QUALIFICATION = ROOT / "output/r39_final_candidate_audit/summary.js
 R39_PRODUCTION_QUALIFICATION = ROOT / "output/r39_production_qualification_audit/summary.json"
 R40_OUTPUT = ROOT / "output/paper_core_growth_gold20_r40_recursive_trend_cushion/account_protection_spec.json"
 R40_QUALIFICATION = ROOT / "output/r40_production_qualification_audit/summary.json"
+R41_OUTPUT = ROOT / "output/paper_core_growth_gold20_r41_pput_protected_capacity/protection_spec.json"
+R41_QUALIFICATION = ROOT / "output/r41_production_qualification_audit/summary.json"
 DECISION_AUTHORITY_OUTPUT = (
     ROOT
     / "output/paper_core_growth_gold20_r11_decision_authority"
@@ -144,6 +146,8 @@ def main(*, use_r39: bool = False) -> None:
     )
     r40_spec = read_optional_json(R40_OUTPUT)
     r40_qualification = read_optional_json(R40_QUALIFICATION)
+    r41_spec = read_optional_json(R41_OUTPUT)
+    r41_qualification = read_optional_json(R41_QUALIFICATION)
     r9_diagnostics = pd.read_csv(
         R9_OUTPUT / "next_signal_diagnostics.csv",
         index_col=0,
@@ -407,6 +411,60 @@ def main(*, use_r39: bool = False) -> None:
             "proxyCagrDelta": float(
                 r40_qualification.get("proxy_cagr_delta", 0.0)
             ),
+        },
+        "pputProtectedCapacity": {
+            "release": str(r41_spec.get("release", "not-built")),
+            "productionEligible": bool(
+                r41_qualification.get("production_qualification_pass", False)
+            ),
+            "active": False,
+            "priceAsOf": str(r41_spec.get("price_as_of", "unavailable")),
+            "sameDate": str(r41_spec.get("price_as_of", "unavailable"))
+            == price_as_of.date().isoformat(),
+            "targetCoverage": float(
+                dict(r41_spec.get("parameters", {})).get("overlay_notional", 0.06)
+            ),
+            "minimumCoverage": 0.05,
+            "maximumCoverage": 0.07,
+            "normalNonCashCap": float(
+                dict(r41_spec.get("parameters", {})).get("normal_non_cash_cap", 1.0)
+            ),
+            "floorDrawdown": float(
+                dict(r41_spec.get("parameters", {})).get("floor_drawdown", -0.19)
+            ),
+            "bearMultiplier": float(
+                dict(r41_spec.get("parameters", {})).get("bear_multiplier", 20.0)
+            ),
+            "tierSize": float(
+                dict(r41_spec.get("parameters", {})).get("tier_size", 0.05)
+            ),
+            "instrument": str(
+                dict(r41_spec.get("protection", {})).get(
+                    "production_instrument", "SPYM listed long put"
+                )
+            ),
+            "strikeRule": str(
+                dict(r41_spec.get("protection", {})).get("strike_rule", "")
+            ),
+            "expirationRule": str(
+                dict(r41_spec.get("protection", {})).get("expiration_rule", "")
+            ),
+            "modernCagr": float(r41_qualification.get("modern_cagr", 0.0)),
+            "modernMaxDrawdown": float(
+                r41_qualification.get("modern_max_drawdown", 0.0)
+            ),
+            "proxyCagr": float(r41_qualification.get("proxy_cagr", 0.0)),
+            "historicalPre2008MaxDrawdown": float(
+                r41_qualification.get("historical_pre2008_max_drawdown", 0.0)
+            ),
+            "example500kContracts": int(
+                r41_qualification.get("example_500k_contracts", 0)
+            ),
+            "example500kCoverage": float(
+                r41_qualification.get("example_500k_coverage", 0.0)
+            ),
+            "activationRule": str(r41_qualification.get("activation_rule", "")),
+            "orderBlockers": list(r41_spec.get("order_blockers", [])),
         },
         "semiconductorOverlay": {
             "baseShare": float(
