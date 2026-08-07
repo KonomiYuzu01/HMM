@@ -15,6 +15,7 @@ RESEARCH_SUMMARY = ROOT / "output/r39_final_candidate_audit/summary.json"
 PRODUCTION_SUMMARY = ROOT / "output/r39_production_qualification_audit/summary.json"
 R38_METADATA = ROOT / "output/paper_core_growth_gold20_r38_convex_overlay/run_metadata.json"
 R39_METADATA = ROOT / "output/paper_core_growth_gold20_r39_relative_damage_veto/run_metadata.json"
+GOVERNANCE_SUMMARY = ROOT / "output/r38_anti_overfit_governance/summary.json"
 
 
 def run_step(command: list[str], *, check: bool = True) -> int:
@@ -37,13 +38,25 @@ def active_strategy_for_refresh(
     *,
     research_qualified: bool,
     production_qualified: bool,
+    successor_promotion_allowed: bool,
 ) -> str:
-    return "R39" if research_qualified and production_qualified else "R38"
+    return (
+        "R39"
+        if successor_promotion_allowed
+        and research_qualified
+        and production_qualified
+        else "R38"
+    )
 
 
 def write_report(active_strategy: str, reason: str | None) -> None:
     metadata_path = R39_METADATA if active_strategy == "R39" else R38_METADATA
     metadata = json.loads(metadata_path.read_text(encoding="utf-8"))
+    governance = (
+        json.loads(GOVERNANCE_SUMMARY.read_text(encoding="utf-8"))
+        if GOVERNANCE_SUMMARY.exists()
+        else {}
+    )
     REPORT.parent.mkdir(parents=True, exist_ok=True)
     REPORT.write_text(
         json.dumps(
@@ -56,6 +69,20 @@ def write_report(active_strategy: str, reason: str | None) -> None:
                 "fallback_reason": reason,
                 "price_as_of": metadata["price_as_of"],
                 "orders_executable": False,
+                "anti_overfit_governance": {
+                    "operational_pass": bool(
+                        governance.get("operational_pass", False)
+                    ),
+                    "forward_sessions": int(
+                        governance.get("forward_sessions", 0)
+                    ),
+                    "minimum_forward_sessions": int(
+                        governance.get("minimum_forward_sessions", 63)
+                    ),
+                    "successor_promotion_allowed": bool(
+                        governance.get("successor_promotion_allowed", False)
+                    ),
+                },
             },
             ensure_ascii=False,
             indent=2,
@@ -79,6 +106,17 @@ def main() -> None:
     if arguments.reuse_latest_complete_inputs:
         parent.append("--reuse-latest-complete-inputs")
     run_step(parent)
+    governance = json.loads(GOVERNANCE_SUMMARY.read_text(encoding="utf-8"))
+    successor_promotion_allowed = bool(
+        governance.get("successor_promotion_allowed", False)
+    )
+    if not successor_promotion_allowed:
+        reason = (
+            "R38 已进入反过拟合前瞻冻结期；当前只维持 75% R11 + 25% R38，"
+            "R39 及后续研究层不参与生产晋级。"
+        )
+        write_report("R38", reason)
+        return
     run_step(["tools/evaluate_r39_relative_damage_concentration_veto.py"])
     research_return_code = run_step(
         ["tools/audit_r39_final_candidate.py"],
@@ -108,6 +146,7 @@ def main() -> None:
     active_strategy = active_strategy_for_refresh(
         research_qualified=research_qualified,
         production_qualified=production_qualified,
+        successor_promotion_allowed=successor_promotion_allowed,
     )
     if active_strategy == "R39":
         run_step(["tools/export_r39_panel_snapshot.py"])

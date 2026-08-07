@@ -8,6 +8,7 @@ def test_r39_is_active_only_when_both_qualification_layers_pass() -> None:
         active_strategy_for_refresh(
             research_qualified=True,
             production_qualified=True,
+            successor_promotion_allowed=True,
         )
         == "R39"
     )
@@ -15,6 +16,7 @@ def test_r39_is_active_only_when_both_qualification_layers_pass() -> None:
         active_strategy_for_refresh(
             research_qualified=False,
             production_qualified=True,
+            successor_promotion_allowed=True,
         )
         == "R38"
     )
@@ -22,6 +24,18 @@ def test_r39_is_active_only_when_both_qualification_layers_pass() -> None:
         active_strategy_for_refresh(
             research_qualified=True,
             production_qualified=False,
+            successor_promotion_allowed=True,
+        )
+        == "R38"
+    )
+
+
+def test_forward_freeze_blocks_r39_even_when_old_audits_pass() -> None:
+    assert (
+        active_strategy_for_refresh(
+            research_qualified=True,
+            production_qualified=True,
+            successor_promotion_allowed=False,
         )
         == "R38"
     )

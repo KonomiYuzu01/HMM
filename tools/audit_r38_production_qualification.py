@@ -22,6 +22,9 @@ FINAL_AUDIT = (
     ROOT
     / "output/r38_accelerating_volatility_1375_final_candidate_audit"
 )
+ANTI_OVERFIT_GOVERNANCE = (
+    ROOT / "output/r38_anti_overfit_governance/summary.json"
+)
 PANEL = ROOT / "strategy-panel"
 
 
@@ -103,6 +106,9 @@ def build_audit(root: Path = ROOT) -> pd.DataFrame:
             encoding="utf-8"
         )
     )
+    governance = json.loads(
+        (root / ANTI_OVERFIT_GOVERNANCE).read_text(encoding="utf-8")
+    )
     panel = load_panel_payload(
         root / PANEL / "app/strategy-live-data.ts"
     )
@@ -134,6 +140,22 @@ def build_audit(root: Path = ROOT) -> pd.DataFrame:
             f"{final['requirements']} requirements"
         ),
         "r38_accelerating_volatility_1375_final_candidate_audit/summary.json",
+    )
+    add(
+        "governance",
+        "Anti-overfit freeze is operational and successor promotion is blocked",
+        bool(
+            governance["operational_pass"]
+            and not governance["successor_promotion_allowed"]
+            and float(governance["current_r38_share"]) == 0.25
+        ),
+        (
+            f"forward={governance['forward_sessions']}/"
+            f"{governance['minimum_forward_sessions']}; "
+            f"R38 share={float(governance['current_r38_share']):.0%}; "
+            "successors=blocked"
+        ),
+        "r38_anti_overfit_governance/summary.json",
     )
     risk = dict(config["risk_budget"])
     overlay = dict(config["semiconductor_overlay"])

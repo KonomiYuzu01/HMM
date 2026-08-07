@@ -11,6 +11,7 @@ const relativeDamageVeto = strategyLiveData.relativeDamageVeto;
 const panelStatus = strategyLiveData.panelStatus;
 const recursiveTrendCushion = strategyLiveData.recursiveTrendCushion;
 const pputProtectedCapacity = strategyLiveData.pputProtectedCapacity;
+const overfitGovernance = strategyLiveData.overfitGovernance;
 const activeStrategy = panelStatus.activeStrategy;
 const r39Active = activeStrategy === "R39";
 const volatilityAccelerationBlock =
@@ -42,7 +43,8 @@ const marketEnvironmentLabel = {
   early_repair: "早期修复",
 }[decisionAuthority.marketEnvironment] ?? "状态未知";
 const r39FallbackUserMessage =
-  "R39 的额外半导体保护暂未启用；当前继续使用已验证的 R38 组合。";
+  `R38 已冻结在策略资金的 ${formatPercent(overfitGovernance.currentR38Share, 0)}；` +
+  `目前只有 ${overfitGovernance.forwardSessions} / ${overfitGovernance.minimumForwardSessions} 个完整前瞻交易日，R39 至 R41 不参与生产晋级。`;
 
 export const strategySnapshot = {
   release: strategyLiveData.release,
@@ -77,6 +79,7 @@ export const strategySnapshot = {
   fallbackTechnicalReason: panelStatus.fallbackReason,
   recursiveTrendCushion: strategyLiveData.recursiveTrendCushion,
   pputProtectedCapacity: strategyLiveData.pputProtectedCapacity,
+  overfitGovernance,
   r11Reference: strategyLiveData.r11Reference,
 } as const;
 
@@ -104,6 +107,16 @@ const growthTarget =
   strategyLiveData.stagedTarget.QQQ + strategyLiveData.stagedTarget.SMH;
 
 export const decisionPipeline = [
+  {
+    stage: "00 · 反过拟合治理",
+    source: "R38 前瞻冻结",
+    title: `只维持 75% R11 + 25% R38；已记录 ${overfitGovernance.forwardSessions} / ${overfitGovernance.minimumForwardSessions} 个前瞻交易日`,
+    evidence: "R39 至 R41 使用过已经反复查看的历史样本，不能再把旧历史称为独立样本外证据。",
+    rule: "冻结期只允许每日执行同一份 R38-v2；前瞻数据只做通过或停止判断，禁止用于调参。达到 63 日也不会自动晋级，必须重新预注册。",
+    result: "R38 比例锁定 25%；R39、R40、R41 不进入目标仓位",
+    plainLanguage: "当前最重要的不是追求更高回测收益，而是让已经冻结的策略接受真实时间检验。",
+    counterfactual: "只有完成至少 63 个未用于调参的真实交易日，并通过新的事前规则后，才允许讨论扩大 R38 或测试新版本。",
+  },
   {
     stage: "01 · 状态输入",
     source: "R9 / HMM",
@@ -152,36 +165,48 @@ export const decisionPipeline = [
       : "当前只使用经过验证的 R38：半导体仍是成长仓主力，但系统只小幅向中性比例靠拢。",
     counterfactual: r39Active
       ? "若相对损失保护解除，QQQ / SMH 会回到 R38 慢速锚点，不会自动增加成长仓总额。"
-      : "只有 R39 的额外保护完成全部安全验证后，才会重新评估是否将它加入当前目标。",
+      : "完成至少 63 个前瞻交易日后，也必须先重新预注册；R39 不会自动进入当前目标。",
   },
   {
     stage: "04 · 长期熊市保护",
     source: "R40 账户净值安全垫",
-    title: recursiveTrendCushion.productionEligible && recursiveTrendCushion.sameDate
+    title: !overfitGovernance.successorPromotionAllowed
+      ? "R40 研究层已被反过拟合冻结阻断"
+      : recursiveTrendCushion.productionEligible && recursiveTrendCushion.sameDate
       ? "R40 已进入私有账户执行链"
       : "R40 未通过同日资格，阻断账户草稿",
     evidence: `历史 1931–2007 代理最深回撤 ${formatPercent(recursiveTrendCushion.historicalPre2008MaxDrawdown)}；现代 CAGR ${formatPercent(recursiveTrendCushion.modernCagr)}，相对基准 ${formatPercent(recursiveTrendCushion.modernCagrDelta)}。`,
     rule: `保护底线 = 账户高水位 × ${formatPercent(1 + recursiveTrendCushion.floorDrawdown, 0)}；非现金请求上限 = ${recursiveTrendCushion.dualTrendPositive ? recursiveTrendCushion.bullMultiplier : recursiveTrendCushion.bearMultiplier} × 安全垫 ÷ 当前净值，再向下取整到 ${formatPercent(recursiveTrendCushion.tierSize, 0)} 档。`,
-    result: recursiveTrendCushion.productionEligible && recursiveTrendCushion.sameDate
+    result: !overfitGovernance.successorPromotionAllowed
+      ? "当前目标不包含 R40；继续执行冻结的 75% R11 + 25% R38"
+      : recursiveTrendCushion.productionEligible && recursiveTrendCushion.sameDate
       ? "私有面板用真实账户净值计算；触发后关闭 R38 增量风险并增加现金"
       : "不生成账户调整草稿",
-    plainLanguage: "它看的不是市场是否像熊市，而是你的策略资金距离自身历史高点还剩多少亏损空间；空间越小，允许持有的非现金资产越少。",
+    plainLanguage: !overfitGovernance.successorPromotionAllowed
+      ? "这层保留为研究记录，但不能利用已经反复查看的历史结果进入当前账户决策。"
+      : "它看的不是市场是否像熊市，而是你的策略资金距离自身历史高点还剩多少亏损空间；空间越小，允许持有的非现金资产越少。",
     counterfactual: "若账户回到新高，安全垫恢复并允许完整 R38；若双趋势转弱，同样安全垫会使用更低的 9.5 倍，减仓更快。",
   },
   {
     stage: "05 · R41 保护性容量",
     source: "R41 · SPYM 5% 虚值长期看跌期权",
-    title: pputProtectedCapacity.productionEligible && pputProtectedCapacity.sameDate
+    title: !overfitGovernance.successorPromotionAllowed
+      ? "R41 已撤回资格：Put 不再用于跨过 20% 回撤门槛"
+      : pputProtectedCapacity.productionEligible && pputProtectedCapacity.sameDate
       ? pputProtectedCapacity.active
         ? "R41 保护已确认，120% 上限可以参与计算"
         : "R41 已通过资格，但尚未持有合格保护；继续使用 R40"
       : "R41 尚未通过同日生产资格；继续使用 R40",
     evidence: `现代净 CAGR ${formatPercent(pputProtectedCapacity.modernCagr)}、最大回撤 ${formatPercent(pputProtectedCapacity.modernMaxDrawdown)}；1931–2007 代理最深回撤 ${formatPercent(pputProtectedCapacity.historicalPre2008MaxDrawdown)}。研究已按保护名义每年 ${formatPercent(0.02)} 的额外实施拖累扣费。`,
     rule: `期权覆盖 = SPYM 价格 × 100 × 合约数 ÷ 策略资金，目标 ${formatPercent(pputProtectedCapacity.targetCoverage, 0)}，只接受 ${formatPercent(pputProtectedCapacity.minimumCoverage, 0)}–${formatPercent(pputProtectedCapacity.maximumCoverage, 0)}。50 万美元、SPYM 90.52 美元时选择 ${pputProtectedCapacity.example500kContracts} 张，实际覆盖 ${formatPercent(pputProtectedCapacity.example500kCoverage, 2)}。`,
-    result: pputProtectedCapacity.active
+    result: !overfitGovernance.successorPromotionAllowed
+      ? "不买 Put，不启用 120% 上限，不生成 R41 订单"
+      : pputProtectedCapacity.active
       ? `双趋势为正且安全垫为正常状态时，非现金上限可到 ${formatPercent(pputProtectedCapacity.normalNonCashCap, 0)}`
       : "当前不启用 120% 扩展；R40 仍是实际账户保护层",
-    plainLanguage: "保护资格和实际持仓是两件事。只有账户里确实存在合格长仓看跌期权，系统才用这份保护换取额外上涨容量；没有就按原 R40 行事。",
+    plainLanguage: !overfitGovernance.successorPromotionAllowed
+      ? "消融测试证明这层只用很小的回撤改善把历史结果推过门槛，缺少实盘安全边际，因此已退出生产候选。"
+      : "保护资格和实际持仓是两件事。只有账户里确实存在合格长仓看跌期权，系统才用这份保护换取额外上涨容量；没有就按原 R40 行事。",
     counterfactual: `若实时报价、期权权限、整数合约覆盖或已持仓任一项未确认，立即失效关闭，不生成期权订单，也不把非现金上限提高到 ${formatPercent(pputProtectedCapacity.normalNonCashCap, 0)}。`,
   },
   {
@@ -211,7 +236,7 @@ export const rejectedAlternatives = [
     question: "为什么不继续维持高 SMH？",
     answer: r39Active
       ? `保护前账户相对损失估算 ${formatPercent(relativeDamageVeto.proposedAccountRelativeLoss)} 已超过 ${formatPercent(relativeDamageVeto.accountRelativeLossBudget)} 预算；R39 因此把 QQQ / SMH 调为成长仓内 50 / 50。`
-      : "R39 的额外半导体保护尚未启用；本次继续使用已验证的 R38 成长仓结构。",
+      : "R39 至 R41 已被前瞻冻结阻断；本次只使用冻结的 R38 成长仓结构。",
   },
   {
     question: "为什么现在不能生成订单？",
@@ -222,14 +247,20 @@ export const rejectedAlternatives = [
 export const decisionChangeConditions = [
   "HMM 状态或双 200 日趋势改变时，重新计算总风险",
   "下一完整收盘后，重新判断单日刹车与波动加速",
-  "SMH 相对损失或集中度门槛解除时，重新计算 QQQ / SMH 比例",
+  "前瞻样本达到 63 日时，只启动重新预注册审查，不自动扩大 R38 或启用后续版本",
   "真实持仓与实际 GDE 比例完整后，才计算可复核订单草稿",
 ] as const;
 
 export const readinessChecks = [
   {
+    label: "反过拟合冻结",
+    value: `${overfitGovernance.forwardSessions} / ${overfitGovernance.minimumForwardSessions} 个前瞻日`,
+    detail: "R38 固定为 25%；R39 至 R41 不晋级，前瞻数据不得用于调参",
+    tone: "caution",
+  },
+  {
     label: "生产策略",
-    value: `${activeStrategy} 已完成安全验证`,
+    value: `${activeStrategy} 冻结运行中`,
     detail: panelStatus.fallbackActive
       ? `${panelStatus.activeQualification} 项检查通过；R39 额外保护当前待命`
       : `${panelStatus.activeQualification} 项检查通过；底层仍是 25% R38 与 75% R11`,
@@ -425,10 +456,10 @@ export const targetDerivation = {
 export const whiteboxRuleLedger = [
   {
     layer: "策略选择",
-    observed: "R39 的额外保护尚未满足启用条件；R38 10 / 10 已验证",
-    threshold: "额外保护只有完成全部安全验证后才可启用",
-    outcome: "使用 R38",
-    effect: "不采用未经资格确认的 R39 快照。",
+    observed: `R38 前瞻 ${overfitGovernance.forwardSessions} / ${overfitGovernance.minimumForwardSessions} 日；生产审计 ${panelStatus.activeQualification}`,
+    threshold: "冻结期最多 25% R38；R39–R41 禁止自动晋级",
+    outcome: "维持 75% R11 + 25% R38",
+    effect: "不采用任何后续研究快照，也不把前瞻数据用于调参。",
     tone: "caution",
   },
   {
@@ -581,6 +612,13 @@ export const decisionDrivers = [
 
 export const keyParameters = [
   {
+    label: "反过拟合前瞻冻结",
+    value: `${overfitGovernance.forwardSessions} / ${overfitGovernance.minimumForwardSessions} 日`,
+    currentUse: `R38 仅管理 ${formatPercent(overfitGovernance.currentR38Share, 0)}；其余继续使用 R11`,
+    why: "所有旧历史统一视为样本内；真实前瞻样本只做验收，不用于继续寻找参数",
+    tone: "active",
+  },
+  {
     label: "R41 保护性容量",
     value: pputProtectedCapacity.productionEligible && pputProtectedCapacity.sameDate
       ? pputProtectedCapacity.active
@@ -697,8 +735,20 @@ export const keyParameters = [
 
 export const parameterGroups = [
   {
-    name: "R41 保护性容量（资格通过，当前未激活）",
-    summary: `中央现代净 CAGR ${formatPercent(pputProtectedCapacity.modernCagr)}；当前仍由 R40 执行`,
+    name: "反过拟合治理（当前最高优先级）",
+    summary: `前瞻 ${overfitGovernance.forwardSessions} / ${overfitGovernance.minimumForwardSessions} 日；R39–R41 已阻断`,
+    parameters: [
+      ["当前生产结构", "75% R11 + 25% R38", "冻结期内不扩大 R38 比例"],
+      ["旧历史证据", "所有旧历史统一视为样本内", "2022–2025 等曾被反复查看的区间不再称为 holdout"],
+      ["前瞻数据用途", "只做通过 / 停止", "不得根据这 63 日修改参数，否则重新计时"],
+      ["自动晋级", "禁止", "达到 63 日也必须重新预注册和人工复核"],
+      ["未来中心回撤安全边际", "不深于 −18%", "不能再用 19.85% 之类贴近 20% 门槛的结果"],
+      ["可选保护层", "核心先独立合格", "Put 等附加层不得负责把失败策略推过门槛"],
+    ],
+  },
+  {
+    name: "R41 保护性容量（资格已撤回）",
+    summary: "仅保留研究记录；不买 Put，不启用 120% 上限",
     parameters: [
       ["保护工具", "SPYM 月度长期看跌期权", "最高不超过现货 95% 的已上市行权价"],
       ["目标 / 合格覆盖", `${formatPercent(pputProtectedCapacity.targetCoverage, 0)} / ${formatPercent(pputProtectedCapacity.minimumCoverage, 0)}–${formatPercent(pputProtectedCapacity.maximumCoverage, 0)}`, "按标的名义金额，不是按期权费占账户比例"],
@@ -819,11 +869,17 @@ export const parameterGroups = [
 
 export const productionEvidence = [
   {
+    label: "反过拟合前瞻证据",
+    candidate: `${overfitGovernance.forwardSessions} / ${overfitGovernance.minimumForwardSessions} 个交易日`,
+    previous: "所有冻结前历史均重新归类为样本内",
+    note: "当前只证明可以维持 25% R38；不证明可以扩大资金，也不允许 R39–R41 晋级",
+  },
+  {
     label: "当前策略选择依据",
     candidate: `${activeStrategy}：${panelStatus.activeQualification} 项安全检查通过`,
     previous: `候选升级层：${panelStatus.requestedStrategy}`,
     note: panelStatus.fallbackActive
-      ? "当前采用已验证的 R38；R39 的额外保护待满足启用条件后再评估。"
+      ? "当前采用冻结的 75% R11 + 25% R38；后续研究层已被治理规则阻断。"
       : "R39 参数、日期、溯源和订单阻断全部通过",
   },
   {
@@ -865,6 +921,8 @@ export const productionEvidence = [
 ] as const;
 
 export const knownRisks = [
+  "历史样本已在多轮研究中反复使用；即使多重比较审计通过，也不能替代真正未见的前瞻数据。",
+  `R38 冻结后目前只有 ${overfitGovernance.forwardSessions} 个完整交易日，远少于 ${overfitGovernance.minimumForwardSessions} 日最低观察期。`,
   r39Active
     ? "R39 只约束 SMH 相对 QQQ 的账户级损失暴露；若 QQQ 与 SMH 同时下跌，它不会消除成长仓的绝对亏损。"
     : "R39 当前未通过资格审计；账户目标不包含其相对损失保护，使用同日合格的 R38。",

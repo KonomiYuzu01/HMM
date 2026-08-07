@@ -74,6 +74,7 @@ test("server-renders the currently qualified strategy operating dashboard", asyn
   const html = await response.text();
   assert.match(html, /<title>策略运行驾驶舱<\/title>/i);
   assert.match(html, /http:\/\/localhost\/og-r39\.png/);
+  assert.match(html, /策略已冻结：75% R11 \+ 25% R38/);
   assert.match(html, /先录入真实持仓，暂时不要下单/);
   assert.match(html, />录入真实持仓<\/button>/);
   assert.match(html, /为什么现在这样做/);
@@ -84,8 +85,8 @@ test("server-renders the currently qualified strategy operating dashboard", asyn
   assert.match(html, /当前读数、门槛和实际影响/);
   assert.match(html, /R9 \/ HMM 状态/);
   assert.match(html, /R11 基础组合/);
-  assert.match(html, /R38 总风险/);
-  assert.match(html, /R39 集中度/);
+  assert.match(html, /R38 25% 冻结/);
+  assert.match(html, /R39–R41 阻断/);
   assert.match(html, /账户执行门控/);
   assert.match(
     html,
@@ -133,7 +134,7 @@ test("server-renders the currently qualified strategy operating dashboard", asyn
   assert.match(html, /订单不可执行/);
   assert.match(
     html,
-    new RegExp(`${strategyLiveData.panelStatus.activeStrategy} 已完成安全验证`),
+    new RegExp(`${strategyLiveData.panelStatus.activeStrategy} 冻结运行中`),
   );
   assert.match(html, /相关参数的最新情况/);
   assert.match(
@@ -151,16 +152,16 @@ test("server-renders the currently qualified strategy operating dashboard", asyn
       )}`,
     ),
   );
-  assert.match(html, /资格、数据日期与自动回退均已独立复核/);
+  assert.match(html, /资格、前瞻冻结与数据日期均已独立复核/);
   assert.match(html, /趋势成立且波动未加速时提高非现金目标/);
   assert.match(html, /短期波动加速时只保留原 R38 容量/);
   assert.match(html, /1\.070 × 1\.375/);
   assert.match(html, /R38 半导体慢速锚点只做 10% 偏移/);
   if (strategyLiveData.panelStatus.fallbackActive) {
-    assert.match(html, /R39 额外保护暂未启用，当前使用 R38/);
-    assert.match(html, /不会使用旧 R39 快照/);
-    assert.match(html, /R39 额外保护当前待命，本次继续使用 R38 目标/);
-    assert.match(html, /R39 额外保护当前待命/);
+    assert.match(html, /R38 已冻结在策略资金的 25%/);
+    assert.match(html, /R39 至 R41 不参与生产晋级/);
+    assert.match(html, /前瞻数据只做通过或停止判断/);
+    assert.match(html, /R39–R41 已阻断/);
   } else {
     assert.match(html, /账户级相对损失保护正在生效/);
     assert.match(html, /21 日相对损失按账户 3% 预算限制集中度/);
@@ -236,18 +237,28 @@ test("explains the fail-closed R41 protection layer", async () => {
   const response = await render("/");
   const html = await response.text();
   const r41 = strategyLiveData.pputProtectedCapacity;
-  const expectedTitle = r41.productionEligible && r41.sameDate
-    ? r41.active
-      ? "R41 保护已确认，120% 上限可以参与计算"
-      : "R41 已通过资格，但尚未持有合格保护；继续使用 R40"
-    : "R41 尚未通过同日生产资格；继续使用 R40";
+  const expectedTitle = "R41 已撤回资格：Put 不再用于跨过 20% 回撤门槛";
   assert.equal(r41.active, false);
+  assert.equal(r41.productionEligible, false);
   assert.equal(r41.example500kContracts, 3);
   assert.ok(Math.abs(r41.example500kCoverage - 0.054312) < 1e-12);
   assert.ok(html.includes(expectedTitle));
   assert.match(html, /3 张/);
   assert.match(html, /5\.43%/);
-  assert.match(html, /继续使用 R40/);
+  assert.match(html, /不买 Put，不启用 120% 上限/);
+});
+
+test("exposes the anti-overfit forward freeze", async () => {
+  const response = await render("/");
+  const html = await response.text();
+  const governance = strategyLiveData.overfitGovernance;
+  assert.equal(governance.currentR38Share, 0.25);
+  assert.equal(governance.successorPromotionAllowed, false);
+  assert.ok(governance.forwardSessions < governance.minimumForwardSessions);
+  assert.match(html, /反过拟合治理（当前最高优先级）/);
+  assert.match(html, new RegExp(`${governance.forwardSessions} / ${governance.minimumForwardSessions}`));
+  assert.match(html, /所有旧历史统一视为样本内/);
+  assert.match(html, /达到 63 日也不会自动晋级/);
 });
 
 test("ships the exact social preview dimensions", async () => {

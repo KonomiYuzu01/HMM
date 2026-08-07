@@ -31,6 +31,9 @@ def refresh_steps(reuse_latest_complete_inputs: bool) -> list[list[str]]:
             [
                 "tools/audit_r38_accelerating_volatility_1375_final_candidate.py"
             ],
+            ["tools/audit_r38_anti_overfit_governance.py"],
+            ["tools/export_r38_panel_snapshot.py"],
+            ["tools/audit_r38_production_qualification.py"],
             ["tools/export_r38_panel_snapshot.py"],
             ["tools/audit_r38_production_qualification.py"],
         ]

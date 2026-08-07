@@ -849,16 +849,10 @@ SMH ETF 剩余额度：${holdingCalculation.managedStockPlan.budgets.SMH.remaini
           <div>
             <p className="overline">每日只需要先看这一页</p>
             <h1>
-              {strategySnapshot.fallbackActive
-                ? `R39 额外保护暂未启用，当前使用 ${strategySnapshot.activeStrategy}。`
-                : "策略正常，订单尚未准备好。"}
+              策略已冻结：75% R11 + 25% R38。
             </h1>
             <p className="intro-copy">
-              {strategySnapshot.fallbackActive
-                ? `${strategySnapshot.fallbackReason} 当前目标与参考价均截至 ${strategySnapshot.priceAsOf}，不会使用旧 R39 快照。`
-                : hasSavedHoldings
-                  ? `R39 已启用账户级相对损失保护，行情已更新到 ${strategySnapshot.priceAsOf}。请核对已保存持仓，再生成调整草稿。`
-                  : `R39 已启用账户级相对损失保护，核心与 GDE 行情已同日更新到 ${strategySnapshot.priceAsOf}。当前仍需录入完整真实持仓与实际 GDE 比例。`}
+              {`当前已记录 ${strategySnapshot.overfitGovernance.forwardSessions} / ${strategySnapshot.overfitGovernance.minimumForwardSessions} 个完整前瞻交易日；这些新数据只用于通过或停止判断，不用于调参。当前目标与参考价截至 ${strategySnapshot.priceAsOf}。`}
             </p>
           </div>
           <div className="as-of-card">
@@ -904,13 +898,9 @@ SMH ETF 剩余额度：${holdingCalculation.managedStockPlan.budgets.SMH.remaini
                 <i>→</i>
                 <span>R11 基础组合</span>
                 <i>→</i>
-                <span>R38 总风险</span>
+                <span>R38 25% 冻结</span>
                 <i>→</i>
-                <span>R39 集中度</span>
-                <i>→</i>
-                <span>R40 净值安全垫</span>
-                <i>→</i>
-                <span>R41 保护性容量</span>
+                <span>R39–R41 阻断</span>
                 <i>→</i>
                 <span>账户执行门控</span>
               </div>
@@ -2050,7 +2040,7 @@ SMH ETF 剩余额度：${holdingCalculation.managedStockPlan.budgets.SMH.remaini
           <div className="section-heading">
             <div>
               <p className="overline">当前生产层级为什么可以使用</p>
-              <h2>资格、数据日期与自动回退均已独立复核</h2>
+              <h2>资格、前瞻冻结与数据日期均已独立复核</h2>
             </div>
           </div>
           <div className="evidence-table">
@@ -2118,7 +2108,7 @@ SMH ETF 剩余额度：${holdingCalculation.managedStockPlan.budgets.SMH.remaini
               <div>
                 <dt>全研究库多重比较</dt>
                 <dd>
-                  把项目中 892 条独特且符合事前纳入规则的收益路径放在一起比较，
+                  把项目中 900 条独特且符合事前纳入规则的收益路径放在一起比较，
                   检查领先结果是否可能只是反复尝试造成。R38 在 21、63、126 日三种
                   连续区块假设下的校正后概率都低于 5%。
                 </dd>

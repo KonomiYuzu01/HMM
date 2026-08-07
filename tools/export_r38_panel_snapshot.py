@@ -27,6 +27,7 @@ R40_OUTPUT = ROOT / "output/paper_core_growth_gold20_r40_recursive_trend_cushion
 R40_QUALIFICATION = ROOT / "output/r40_production_qualification_audit/summary.json"
 R41_OUTPUT = ROOT / "output/paper_core_growth_gold20_r41_pput_protected_capacity/protection_spec.json"
 R41_QUALIFICATION = ROOT / "output/r41_production_qualification_audit/summary.json"
+ANTI_OVERFIT_GOVERNANCE = ROOT / "output/r38_anti_overfit_governance/summary.json"
 DECISION_AUTHORITY_OUTPUT = (
     ROOT
     / "output/paper_core_growth_gold20_r11_decision_authority"
@@ -89,12 +90,18 @@ def panel_status(
     r39_research = read_optional_json(R39_RESEARCH_QUALIFICATION)
     r39_production = read_optional_json(R39_PRODUCTION_QUALIFICATION)
     r39_metadata = read_optional_json(R39_OUTPUT / "run_metadata.json")
+    governance = read_optional_json(ANTI_OVERFIT_GOVERNANCE)
+    successor_promotion_allowed = bool(
+        governance.get("successor_promotion_allowed", False)
+    )
     r39_price = str(r39_metadata.get("price_as_of", "unavailable"))
     r39_research_pass = bool(r39_research.get("qualification_pass", False))
     r39_production_pass = bool(
         r39_production.get("production_qualification_pass", False)
     )
     r39_current = r39_price == active_price_as_of.date().isoformat()
+    if use_r39 and not successor_promotion_allowed:
+        raise ValueError("anti-overfit governance blocks R39 promotion")
     if use_r39:
         return {
             "requestedStrategy": "R39",
@@ -109,8 +116,14 @@ def panel_status(
             "r39ResearchQualificationPass": r39_research_pass,
             "r39ProductionQualificationPass": r39_production_pass,
             "r39PriceAsOf": r39_price,
+            "successorPromotionAllowed": successor_promotion_allowed,
         }
-    if not r39_research_pass:
+    if not successor_promotion_allowed:
+        reason = (
+            "R38 已进入反过拟合前瞻冻结期；当前只维持 75% R11 + 25% R38，"
+            "R39 至 R41 不参与生产晋级。"
+        )
+    elif not r39_research_pass:
         reason = (
             "R39 的最新研究资格审计未通过，已自动使用同日合格的 R38。"
         )
@@ -136,6 +149,7 @@ def panel_status(
         "r39ResearchQualificationPass": r39_research_pass,
         "r39ProductionQualificationPass": r39_production_pass,
         "r39PriceAsOf": r39_price,
+        "successorPromotionAllowed": successor_promotion_allowed,
     }
 
 
@@ -162,6 +176,10 @@ def main(*, use_r39: bool = False) -> None:
     r40_qualification = read_optional_json(R40_QUALIFICATION)
     r41_spec = read_optional_json(R41_OUTPUT)
     r41_qualification = read_optional_json(R41_QUALIFICATION)
+    governance = read_optional_json(ANTI_OVERFIT_GOVERNANCE)
+    successor_promotion_allowed = bool(
+        governance.get("successor_promotion_allowed", False)
+    )
     r9_diagnostics = pd.read_csv(
         R9_OUTPUT / "next_signal_diagnostics.csv",
         index_col=0,
@@ -288,6 +306,35 @@ def main(*, use_r39: bool = False) -> None:
             active_release=str(release_metadata["release"]),
             active_price_as_of=price_as_of,
         ),
+        "overfitGovernance": {
+            "release": str(governance.get("release", "unavailable")),
+            "operationalPass": bool(
+                governance.get("operational_pass", False)
+            ),
+            "forwardSessions": int(governance.get("forward_sessions", 0)),
+            "minimumForwardSessions": int(
+                governance.get("minimum_forward_sessions", 63)
+            ),
+            "forwardReviewEligible": bool(
+                governance.get("forward_review_eligible", False)
+            ),
+            "currentR38Share": float(
+                governance.get("current_r38_share", 0.25)
+            ),
+            "successorPromotionAllowed": successor_promotion_allowed,
+            "blockedSuccessors": list(
+                governance.get("blocked_successors", ["R39", "R40", "R41"])
+            ),
+            "historicalEvidenceClassification": str(
+                governance.get(
+                    "historical_evidence_classification",
+                    "IN_SAMPLE_REUSED",
+                )
+            ),
+            "forwardEvidenceUse": str(
+                governance.get("forward_evidence_use", "GO_NO_GO_ONLY")
+            ),
+        },
         "accountBuildTiming": {
             "requiredNewCompletedCloses": 1,
             "afterCurrentTrancheReviewEt": (
@@ -400,7 +447,7 @@ def main(*, use_r39: bool = False) -> None:
             "release": str(r40_spec.get("release", "not-built")),
             "productionEligible": bool(
                 r40_qualification.get("production_qualification_pass", False)
-            ),
+            ) and successor_promotion_allowed,
             "priceAsOf": str(r40_spec.get("price_as_of", "unavailable")),
             "sameDate": str(r40_spec.get("price_as_of", "unavailable"))
             == price_as_of.date().isoformat(),
@@ -434,7 +481,7 @@ def main(*, use_r39: bool = False) -> None:
             "release": str(r41_spec.get("release", "not-built")),
             "productionEligible": bool(
                 r41_qualification.get("production_qualification_pass", False)
-            ),
+            ) and successor_promotion_allowed,
             "active": False,
             "priceAsOf": str(r41_spec.get("price_as_of", "unavailable")),
             "sameDate": str(r41_spec.get("price_as_of", "unavailable"))

@@ -1,0 +1,49 @@
+release: 2026-08-07-r38-anti-overfit-v1
+strategy_release: 2026-07-29-r38-v2
+status: forward_frozen
+
+freeze:
+  price_as_of: 2026-07-28
+  first_forward_session: 2026-07-29
+  minimum_completed_forward_sessions: 63
+  maximum_r38_share_before_review: 0.25
+  historical_samples_after_freeze_are_in_sample: true
+  forward_sample_may_not_be_used_for_parameter_tuning: true
+
+promotion:
+  automatic_successor_promotion: false
+  blocked_successors:
+    - R39
+    - R40
+    - R41
+  require_new_preregistration_after_forward_review: true
+  core_must_pass_without_optional_overlays: true
+  central_maximum_drawdown_limit: -0.18
+  stressed_neighbor_maximum_drawdown_limit: -0.20
+  minimum_optional_risk_layer_drawdown_improvement: 0.02
+  maximum_optional_risk_layer_cagr_cost: 0.005
+
+multiple_testing:
+  target: r38_accel1375
+  required_block_days:
+    - 21
+    - 63
+    - 126
+  minimum_unique_candidate_paths: 900
+  maximum_familywise_spa_p_value: 0.05
+
+frozen_source_sha256:
+  config/paper_core_growth_gold20_r38_convex_overlay.yaml: 0fbda7a5b0d7397292dfcb0d9337530b385ef71697a39ce2049faf39af304373
+  src/regime_strategy/model.py: 5a46c3966006af06e3ea6c5113dfd442bfe3edb539ece8d925ffb800c88e7b7f
+  src/regime_strategy/features.py: 535c7f70956d18edc5b616341d8ea8be75ffbf8664037e3fa6478daff4f6f6b3
+  src/regime_strategy/portfolio.py: acbfcaf3216612847716a16b71a20565c03f8e59c069f46e242dcfdf47ba715f
+  src/regime_strategy/backtest.py: 6a942ff71a31664bf0df75f4ce2e3d8803238dc4943c80a7dc6004bb43b5c763
+  src/regime_strategy/ensemble.py: e1ea1e785de3e1a3b0b5f779b74d6251a8b254f2a5facdafaf6caf6d10f87f90
+  src/regime_strategy/hybrid.py: 0b1dd7d228b935fd26c87220cb0ffeb25093d765bf59b6962c3958193d21363d
+  src/regime_strategy/data.py: fc87ea663f7ebffe469b275b6018244e7a2b65d7a1dd7a893c1da575b0607c70
+  src/regime_strategy/operations.py: d46c18b384fd06a265c659308200a41977abfeebf5607e0fdf48590c28abe76b
+  tools/evaluate_r38_convex_semiconductor_overlay.py: f7a378cf4ed042625aec9ec9a296ff25c838c08d3066890e853c1a65fbcd42bb
+  tools/evaluate_r38_accelerating_volatility_capacity_fill.py: 587c50c3a145d5cb3a39ebf036afcaada6bca0e356595439c4e4a38d763cde5f
+  tools/evaluate_r38_accelerating_volatility_capacity_fill_1375.py: fd762e0c6e0d386dc74aab10b554bfa90499969d1b7bf7ea0e1e2c7e5d8c3b41
+  tools/build_r38_production_overlay.py: b43845ecc0143f49cf0d163b76b26a3fdb7c3fa14abea7935199c96e59b3b613
+  tools/audit_r38_accelerating_volatility_1375_final_candidate.py: 923f4a9228394e9e9311dca74d953bd6c0bab797a96f902d3da53c95f078dd34

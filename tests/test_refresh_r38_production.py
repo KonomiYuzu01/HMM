@@ -9,6 +9,9 @@ def test_r38_refresh_rebuilds_research_after_r11_refresh() -> None:
         ["tools/evaluate_r38_accelerating_volatility_capacity_fill_1375.py"],
         ["tools/build_r38_production_overlay.py"],
         ["tools/audit_r38_accelerating_volatility_1375_final_candidate.py"],
+        ["tools/audit_r38_anti_overfit_governance.py"],
+        ["tools/export_r38_panel_snapshot.py"],
+        ["tools/audit_r38_production_qualification.py"],
         ["tools/export_r38_panel_snapshot.py"],
         ["tools/audit_r38_production_qualification.py"],
     ]
@@ -22,6 +25,9 @@ def test_r38_reused_close_also_rebuilds_research() -> None:
             "--reuse-latest-complete-inputs",
         ],
         ["tools/audit_r38_accelerating_volatility_1375_final_candidate.py"],
+        ["tools/audit_r38_anti_overfit_governance.py"],
+        ["tools/export_r38_panel_snapshot.py"],
+        ["tools/audit_r38_production_qualification.py"],
         ["tools/export_r38_panel_snapshot.py"],
         ["tools/audit_r38_production_qualification.py"],
     ]
