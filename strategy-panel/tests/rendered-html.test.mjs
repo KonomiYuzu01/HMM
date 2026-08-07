@@ -232,14 +232,19 @@ test("uses the white-box R40 tier formula in the private account draft", () => {
   assert.ok(Math.abs(Object.values(target).reduce((sum, value) => sum + value, 0) - 1) < 1e-12);
 });
 
-test("explains the qualified but fail-closed R41 protection layer", async () => {
+test("explains the fail-closed R41 protection layer", async () => {
   const response = await render("/");
   const html = await response.text();
-  assert.equal(strategyLiveData.pputProtectedCapacity.productionEligible, true);
-  assert.equal(strategyLiveData.pputProtectedCapacity.active, false);
-  assert.equal(strategyLiveData.pputProtectedCapacity.example500kContracts, 3);
-  assert.ok(Math.abs(strategyLiveData.pputProtectedCapacity.example500kCoverage - 0.054312) < 1e-12);
-  assert.match(html, /R41 已通过资格，但尚未持有合格保护/);
+  const r41 = strategyLiveData.pputProtectedCapacity;
+  const expectedTitle = r41.productionEligible && r41.sameDate
+    ? r41.active
+      ? "R41 保护已确认，120% 上限可以参与计算"
+      : "R41 已通过资格，但尚未持有合格保护；继续使用 R40"
+    : "R41 尚未通过同日生产资格；继续使用 R40";
+  assert.equal(r41.active, false);
+  assert.equal(r41.example500kContracts, 3);
+  assert.ok(Math.abs(r41.example500kCoverage - 0.054312) < 1e-12);
+  assert.ok(html.includes(expectedTitle));
   assert.match(html, /3 张/);
   assert.match(html, /5\.43%/);
   assert.match(html, /继续使用 R40/);
