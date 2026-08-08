@@ -50,6 +50,35 @@ def test_satellite_adds_fixed_growth_weight_and_preserves_total() -> None:
     assert metadata["satellite_enabled"] is True
 
 
+def test_satellite_can_split_weight_across_growth_spx_and_gold() -> None:
+    date = pd.Timestamp("2026-01-05")
+    candidate = SatelliteCandidate(
+        "test",
+        0.10,
+        -0.02,
+        semis_share=0.20,
+        spx_share=0.30,
+        gold_share=0.40,
+    )
+    policy = HighWaterSatellitePolicy(
+        StubBasePolicy(),  # type: ignore[arg-type]
+        pd.Series(True, index=[date]),
+        candidate,
+    )
+    target, force, metadata = policy(date, base_target(), 1.0, 1.0)
+    assert abs(float(target.sum()) - 1.0) < 1e-12
+    assert target["QQQ"] == pytest.approx(0.21)
+    assert target["SEMIS"] == pytest.approx(0.12)
+    assert target["SPX"] == pytest.approx(0.23)
+    assert target["GOLD"] == pytest.approx(0.14)
+    assert target["CASH"] == pytest.approx(0.20)
+    assert force
+    assert metadata["satellite_qqq_weight"] == pytest.approx(0.01)
+    assert metadata["satellite_semis_weight"] == pytest.approx(0.02)
+    assert metadata["satellite_spx_weight"] == pytest.approx(0.03)
+    assert metadata["satellite_gold_weight"] == pytest.approx(0.04)
+
+
 def test_account_drawdown_gate_disables_satellite_and_forces_exit() -> None:
     dates = pd.to_datetime(["2026-01-05", "2026-01-06"])
     candidate = SatelliteCandidate("test", 0.10, -0.02, 0.50)

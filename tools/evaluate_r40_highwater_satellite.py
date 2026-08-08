@@ -30,9 +30,13 @@ from tools.evaluate_recursive_trend_cushion_production_candidate import (
 OUTPUT = Path("output/r40_highwater_satellite")
 MODERN_TERM_PRICES = Path("data/prices_vix_hedge.csv")
 PRE2008_TERM_PRICES = Path("data/prices_pre2008_crash_proxy.csv")
-SATELLITE_WEIGHTS = (0.05, 0.10, 0.15)
-ACCOUNT_DRAWDOWN_GATES = (-0.005, -0.015)
-SEMIS_SHARES = (0.0, 0.5, 1.0)
+SATELLITE_WEIGHTS = (0.15, 0.20, 0.25)
+ACCOUNT_DRAWDOWN_GATES = (-0.10,)
+SATELLITE_BASKETS = (
+    ("qqq_gold", 0.00, 0.00, 0.50),
+    ("spx_gold", 0.00, 0.50, 0.50),
+    ("growth_gold", 0.20, 0.00, 0.40),
+)
 
 
 @dataclass(frozen=True)
@@ -41,6 +45,8 @@ class SatelliteCandidate:
     satellite_weight: float
     account_drawdown_gate: float
     semis_share: float
+    spx_share: float = 0.0
+    gold_share: float = 0.0
     term_premium_threshold: float = 1.0
 
     def __post_init__(self) -> None:
@@ -50,6 +56,12 @@ class SatelliteCandidate:
             raise ValueError("account_drawdown_gate must be in [-0.10, 0]")
         if not 0.0 <= self.semis_share <= 1.0:
             raise ValueError("semis_share must be in [0, 1]")
+        if not 0.0 <= self.spx_share <= 1.0:
+            raise ValueError("spx_share must be in [0, 1]")
+        if not 0.0 <= self.gold_share <= 1.0:
+            raise ValueError("gold_share must be in [0, 1]")
+        if self.semis_share + self.spx_share + self.gold_share > 1.0 + 1e-12:
+            raise ValueError("satellite asset shares cannot exceed one")
         if self.term_premium_threshold < 1.0:
             raise ValueError("term_premium_threshold must be at least one")
 
@@ -88,8 +100,13 @@ class HighWaterSatellitePolicy:
         extra = self.candidate.satellite_weight if permitted else 0.0
         if extra > 0.0:
             semis_extra = extra * self.candidate.semis_share
-            target.loc["QQQ"] += extra - semis_extra
+            spx_extra = extra * self.candidate.spx_share
+            gold_extra = extra * self.candidate.gold_share
+            qqq_extra = extra - semis_extra - spx_extra - gold_extra
+            target.loc["QQQ"] += qqq_extra
             target.loc["SEMIS"] += semis_extra
+            target.loc["SPX"] += spx_extra
+            target.loc["GOLD"] += gold_extra
             target.loc["CASH"] -= extra
         if abs(float(target.sum()) - 1.0) > 1e-10:
             raise AssertionError("satellite target weights do not sum to one")
@@ -101,8 +118,16 @@ class HighWaterSatellitePolicy:
                 "satellite_enabled": permitted,
                 "satellite_permission": bool(self.permission.get(date, False)),
                 "satellite_weight": extra,
-                "satellite_qqq_weight": extra * (1.0 - self.candidate.semis_share),
+                "satellite_qqq_weight": extra
+                * (
+                    1.0
+                    - self.candidate.semis_share
+                    - self.candidate.spx_share
+                    - self.candidate.gold_share
+                ),
                 "satellite_semis_weight": extra * self.candidate.semis_share,
+                "satellite_spx_weight": extra * self.candidate.spx_share,
+                "satellite_gold_weight": extra * self.candidate.gold_share,
                 "satellite_account_gate": self.candidate.account_drawdown_gate,
             }
         )
@@ -191,6 +216,8 @@ def metric_row(
         "satellite_weight": candidate.satellite_weight,
         "account_drawdown_gate": candidate.account_drawdown_gate,
         "semis_share": candidate.semis_share,
+        "spx_share": candidate.spx_share,
+        "gold_share": candidate.gold_share,
         "enabled_fraction": float(trial["satellite_enabled"].mean()),
         "baseline_cagr": base["cagr"],
         "candidate_cagr": tested["cagr"],
@@ -219,16 +246,27 @@ def main() -> None:
         sample: base_components(settings, scenario)
         for sample, settings in settings_by_sample.items()
     }
+    baselines = {
+        sample: simulate_cushion_candidate(
+            settings,
+            scenario,
+            components[sample],
+            R40_CENTRAL,
+        )[0]
+        for sample, settings in settings_by_sample.items()
+    }
     candidates = tuple(
         SatelliteCandidate(
-            f"sat{int(weight * 1000):03d}_dd{int(abs(gate) * 1000):03d}_s{int(share * 100):03d}",
+            f"sat{int(weight * 1000):03d}_dd{int(abs(gate) * 1000):03d}_{basket}",
             weight,
             gate,
-            share,
+            semis_share,
+            spx_share,
+            gold_share,
         )
         for weight in SATELLITE_WEIGHTS
         for gate in ACCOUNT_DRAWDOWN_GATES
-        for share in SEMIS_SHARES
+        for basket, semis_share, spx_share, gold_share in SATELLITE_BASKETS
     )
     rows: list[dict[str, object]] = []
     for candidate in candidates:
@@ -240,17 +278,11 @@ def main() -> None:
                 components[sample],
                 candidate,
             )
-            baseline_trial, _ = simulate_cushion_candidate(
-                settings,
-                scenario,
-                components[sample],
-                R40_CENTRAL,
-            )
             rows.append(
                 metric_row(
                     sample,
                     settings,
-                    baseline_trial["net_return"],
+                    baselines[sample]["net_return"],
                     trial,
                     candidate,
                 )
