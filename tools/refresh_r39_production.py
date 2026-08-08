@@ -49,6 +49,14 @@ def active_strategy_for_refresh(
     )
 
 
+def r40_maintenance_steps() -> list[list[str]]:
+    """Keep the R40 production record current without promoting it."""
+    return [
+        ["tools/build_r40_account_protection.py"],
+        ["tools/audit_r40_production_qualification.py"],
+    ]
+
+
 def write_report(active_strategy: str, reason: str | None) -> None:
     metadata_path = R39_METADATA if active_strategy == "R39" else R38_METADATA
     metadata = json.loads(metadata_path.read_text(encoding="utf-8"))
@@ -106,6 +114,8 @@ def main() -> None:
     if arguments.reuse_latest_complete_inputs:
         parent.append("--reuse-latest-complete-inputs")
     run_step(parent)
+    for command in r40_maintenance_steps():
+        run_step(command)
     governance = json.loads(GOVERNANCE_SUMMARY.read_text(encoding="utf-8"))
     successor_promotion_allowed = bool(
         governance.get("successor_promotion_allowed", False)
@@ -115,6 +125,7 @@ def main() -> None:
             "R38 已进入反过拟合前瞻冻结期；当前只维持 75% R11 + 25% R38，"
             "R39 及后续研究层不参与生产晋级。"
         )
+        run_step(["tools/export_r38_panel_snapshot.py"])
         write_report("R38", reason)
         return
     run_step(["tools/evaluate_r39_relative_damage_concentration_veto.py"])
