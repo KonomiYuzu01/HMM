@@ -1,5 +1,5 @@
 {
-  "cache_sha256": "e16f4af21841b556addad2e78372888bef5de240c0b3f12a18b70200bf13fd2e",
+  "cache_sha256": "431e2b537b7c184f3ebe1062b66f1b4325665456af8743b98b8c6ba6e6c8e5c8",
   "first_date": "2014-01-02",
   "first_valid_date_by_ticker": {
     "AAPL": "2014-01-02",
@@ -60,11 +60,11 @@
     "TSM": 0,
     "TXN": 0
   },
-  "price_as_of": "2026-08-05",
+  "price_as_of": "2026-08-07",
   "purpose": "Risk calibration and counterfactual overlay stress tests only; not a point-in-time stock-selection universe",
-  "requested_end_exclusive": "2026-08-06",
+  "requested_end_exclusive": "2026-08-09",
   "requested_start": "2014-01-01",
-  "row_count": 3166,
+  "row_count": 3168,
   "tickers": [
     "NVDA",
     "AMD",

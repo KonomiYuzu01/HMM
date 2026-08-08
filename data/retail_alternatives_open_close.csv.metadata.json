@@ -1,11 +1,11 @@
 {
-  "cache_sha256": "7bf15c20156a4006a49d1214c42aff1dbf817ac976ef8a14db53c7be76ee5294",
+  "cache_sha256": "d05c8ebc5f64778285f3f4d3749f9e7f4f076a43bd9dd270eb9b8da8958b2ee6",
   "first_date": "2022-03-17",
   "generator": "tools/evaluate_retail_alternatives.py::download_gde_open_close",
   "market_data_adjustment": "auto_adjust=True",
   "market_data_source": "Yahoo Finance via yfinance",
-  "price_as_of": "2026-08-05",
+  "price_as_of": "2026-08-07",
   "purpose": "Live GDE open/close execution validation; not a real-time quote source.",
-  "row_count": 1100,
+  "row_count": 1102,
   "ticker": "GDE"
 }
