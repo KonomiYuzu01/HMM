@@ -170,21 +170,19 @@ export const decisionPipeline = [
   {
     stage: "04 · 长期熊市保护",
     source: "R40 账户净值安全垫",
-    title: !overfitGovernance.successorPromotionAllowed
-      ? "R40 研究层已被反过拟合冻结阻断"
-      : recursiveTrendCushion.productionEligible && recursiveTrendCushion.sameDate
-      ? "R40 已进入私有账户执行链"
+    title: recursiveTrendCushion.draftEligible
+      ? recursiveTrendCushion.promotionAllowed
+        ? "R40 已进入私有账户执行链"
+        : "R40 同日资格通过，私有草稿可用（晋级冻结）"
       : "R40 未通过同日资格，阻断账户草稿",
     evidence: `历史 1931–2007 代理最深回撤 ${formatPercent(recursiveTrendCushion.historicalPre2008MaxDrawdown)}；现代 CAGR ${formatPercent(recursiveTrendCushion.modernCagr)}，相对基准 ${formatPercent(recursiveTrendCushion.modernCagrDelta)}。`,
     rule: `保护底线 = 账户高水位 × ${formatPercent(1 + recursiveTrendCushion.floorDrawdown, 0)}；非现金请求上限 = ${recursiveTrendCushion.dualTrendPositive ? recursiveTrendCushion.bullMultiplier : recursiveTrendCushion.bearMultiplier} × 安全垫 ÷ 当前净值，再向下取整到 ${formatPercent(recursiveTrendCushion.tierSize, 0)} 档。`,
-    result: !overfitGovernance.successorPromotionAllowed
-      ? "当前目标不包含 R40；继续执行冻结的 75% R11 + 25% R38"
-      : recursiveTrendCushion.productionEligible && recursiveTrendCushion.sameDate
-      ? "私有面板用真实账户净值计算；触发后关闭 R38 增量风险并增加现金"
+    result: recursiveTrendCushion.draftEligible
+      ? "私有面板可用真实账户净值生成保护草稿；当前生产目标仍是 75% R11 + 25% R38"
       : "不生成账户调整草稿",
-    plainLanguage: !overfitGovernance.successorPromotionAllowed
-      ? "这层保留为研究记录，但不能利用已经反复查看的历史结果进入当前账户决策。"
-      : "它看的不是市场是否像熊市，而是你的策略资金距离自身历史高点还剩多少亏损空间；空间越小，允许持有的非现金资产越少。",
+    plainLanguage: recursiveTrendCushion.promotionAllowed
+      ? "它看的不是市场是否像熊市，而是你的策略资金距离自身历史高点还剩多少亏损空间；空间越小，允许持有的非现金资产越少。"
+      : "草稿只用于私有人工复核，不代表 R40 已晋级，也不会改变当前生产目标或自动提交订单。",
     counterfactual: "若账户回到新高，安全垫恢复并允许完整 R38；若双趋势转弱，同样安全垫会使用更低的 9.5 倍，减仓更快。",
   },
   {
@@ -631,12 +629,12 @@ export const keyParameters = [
   },
   {
     label: "R40 账户非现金上限",
-    value: recursiveTrendCushion.productionEligible && recursiveTrendCushion.sameDate
-      ? "已进入私有执行链"
+    value: recursiveTrendCushion.draftEligible
+      ? "同日资格通过 · 草稿可用"
       : "阻断",
     currentUse: `底线 ${formatPercent(recursiveTrendCushion.floorDrawdown)}；分档 ${formatPercent(recursiveTrendCushion.tierSize, 0)}`,
     why: "用真实账户高水位约束长期熊市中的反复重入；账户数据只保存在登录后的私有空间",
-    tone: recursiveTrendCushion.productionEligible && recursiveTrendCushion.sameDate ? "active" : "standby",
+    tone: recursiveTrendCushion.draftEligible ? "active" : "standby",
   },
   {
     label: "当前生产资格",
@@ -761,8 +759,8 @@ export const parameterGroups = [
   },
   {
     name: "R40 长期熊市账户保护",
-    summary: recursiveTrendCushion.productionEligible && recursiveTrendCushion.sameDate
-      ? "生产资格已通过；账户上限在私有持仓中计算"
+    summary: recursiveTrendCushion.draftEligible
+      ? "同日资格已通过；账户保护草稿可在私有持仓中计算"
       : "同日资格未通过，账户草稿被阻断",
     parameters: [
       ["历史回撤底线", formatPercent(recursiveTrendCushion.floorDrawdown), "高水位乘以 81% 得到底线净值"],

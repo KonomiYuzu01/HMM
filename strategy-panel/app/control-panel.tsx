@@ -317,9 +317,7 @@ export function ControlPanel() {
         ? savedHighWater
         : managedEquity,
     );
-    const eligible =
-      strategySnapshot.recursiveTrendCushion.productionEligible &&
-      strategySnapshot.recursiveTrendCushion.sameDate;
+    const eligible = strategySnapshot.recursiveTrendCushion.draftEligible;
     const calculation =
       eligible && stateDateValid && managedEquity > 0
         ? calculateRecursiveTrendCushion({

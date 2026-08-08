@@ -210,7 +210,32 @@ test("states the account build cadence separately from the R38 rollout", async (
   );
 });
 
-test("uses the white-box R40 tier formula in the private account draft", () => {
+test("allows a same-date R40 private draft while promotion remains frozen", async () => {
+  const r40 = strategyLiveData.recursiveTrendCushion;
+  assert.equal(r40.productionQualificationPass, true);
+  assert.equal(r40.sameDate, true);
+  assert.equal(r40.draftEligible, true);
+  assert.equal(r40.promotionAllowed, false);
+  assert.equal(r40.productionEligible, false);
+
+  const response = await render();
+  assert.equal(response.status, 200);
+  const html = await response.text();
+  assert.match(html, /R40 同日资格通过，私有草稿可用（晋级冻结）/);
+
+  const panelSource = await readFile(
+    new URL("../app/control-panel.tsx", import.meta.url),
+    "utf8",
+  );
+  assert.match(
+    panelSource,
+    /const eligible = strategySnapshot\.recursiveTrendCushion\.draftEligible/,
+  );
+  assert.doesNotMatch(
+    panelSource,
+    /const eligible = strategySnapshot\.recursiveTrendCushion\.productionEligible/,
+  );
+
   const state = calculateRecursiveTrendCushion({
     priorEquity: 85,
     priorPeak: 100,

@@ -80,6 +80,25 @@ def effective_execution_window_status(
     return declared_status
 
 
+def r40_eligibility(
+    *,
+    qualification_pass: bool,
+    r40_price_as_of: str,
+    active_price_as_of: str,
+    successor_promotion_allowed: bool,
+) -> dict[str, bool]:
+    same_date = r40_price_as_of == active_price_as_of
+    return {
+        "productionQualificationPass": qualification_pass,
+        "promotionAllowed": successor_promotion_allowed,
+        "draftEligible": qualification_pass and same_date,
+        "productionEligible": (
+            qualification_pass and successor_promotion_allowed
+        ),
+        "sameDate": same_date,
+    }
+
+
 def panel_status(
     *,
     use_r39: bool,
@@ -220,6 +239,15 @@ def main(*, use_r39: bool = False) -> None:
     )
     release_metadata = r39_metadata or r38_metadata
     price_as_of = pd.Timestamp(release_metadata["price_as_of"])
+    r40_price_as_of = str(r40_spec.get("price_as_of", "unavailable"))
+    r40_status = r40_eligibility(
+        qualification_pass=bool(
+            r40_qualification.get("production_qualification_pass", False)
+        ),
+        r40_price_as_of=r40_price_as_of,
+        active_price_as_of=price_as_of.date().isoformat(),
+        successor_promotion_allowed=successor_promotion_allowed,
+    )
     latest = market.loc[price_as_of]
     next_session = pd.Timestamp(release_metadata["next_session"])
     next_open_et = (
@@ -445,12 +473,8 @@ def main(*, use_r39: bool = False) -> None:
         },
         "recursiveTrendCushion": {
             "release": str(r40_spec.get("release", "not-built")),
-            "productionEligible": bool(
-                r40_qualification.get("production_qualification_pass", False)
-            ) and successor_promotion_allowed,
-            "priceAsOf": str(r40_spec.get("price_as_of", "unavailable")),
-            "sameDate": str(r40_spec.get("price_as_of", "unavailable"))
-            == price_as_of.date().isoformat(),
+            **r40_status,
+            "priceAsOf": r40_price_as_of,
             "floorDrawdown": float(
                 dict(r40_spec.get("parameters", {})).get("floor_drawdown", -0.19)
             ),
